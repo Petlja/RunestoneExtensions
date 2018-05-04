@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""`sphinx_rtd_theme` lives on `Github`_.
+"""`runestone_petlja_ext` lives on `Github`_.
 .. _github: https://github.com/Petlja/RunestoneExtensions
 """
 
@@ -11,11 +11,9 @@ setup(
     name='runestone_petlja_ext',
     version=0.1,
     url='https://github.com/Petlja/RunestoneExtensions',
-    #license='MIT',
-    #author='Dave Snider, Read the Docs, Inc. & contributors',
-    #author_email='dev@readthedocs.org',
+    license='GPLv3+',
     description='Runestone extensions by Petlja',
-    #long_description=open('README.rst', encoding='utf-8').read(),
+    long_description=open('README.md', encoding='utf-8').read(),
     zip_safe=False,
     packages=['bootstrap_petlja_theme', 'runestone_petlja_ext'],
     package_data={'bootstrap_petlja_theme': [
@@ -28,21 +26,22 @@ setup(
         'static/font/*.*'
     ]},
     include_package_data=True,
+
     # See http://www.sphinx-doc.org/en/stable/theming.html#distribute-your-theme-as-a-python-package
     entry_points = {
         'sphinx.html_themes': [
             'bootstrap_petlja_theme = bootstrap_petlja_theme',
         ]
     },
+
     classifiers=[
         'Framework :: Sphinx',
         'Framework :: Sphinx :: Theme',
         'Development Status :: 5 - Production/Stable',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
