@@ -1,0 +1,17 @@
+<div class="col-md-12">
+<ul class="pager">
+    {%- if prev %}
+        <li id="relations-prev" title='Претходно поглавље - {{ prev.title }}' data-toggle="tooltip"><a href="{{ prev.link|e }}">Претходно поглавље</a></li>
+    {% endif %}
+    {%- if next %}
+        <li id="relations-next" title='Следеће поглавље - {{ next.title }}' data-toggle="tooltip"><a href="{{ next.link|e }}">Следеће поглавље</a></li>
+    {%- endif %}
+</ul>
+
+<script type="text/javascript">
+
+  $('#relations-prev').tooltip({'placement':'right', 'selector': '', 'delay': { show: 100, hide: 50}});
+  $('#relations-next').tooltip({'placement':'left', 'selector': '', 'delay': { show: 100, hide: 50}});
+
+</script>
+</div>

@@ -1,0 +1,3 @@
+[sphinx.html_themes]
+bootstrap_petlja_theme = bootstrap_petlja_theme
+
