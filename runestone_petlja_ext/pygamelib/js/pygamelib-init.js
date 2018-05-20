@@ -1,0 +1,1 @@
+PygameLib.init("_static");

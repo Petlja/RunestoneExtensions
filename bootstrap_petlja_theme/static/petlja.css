@@ -33,6 +33,18 @@ body {
     transition: box-shadow .25s;
 }
 
+.course-box .alert-warning {
+  background-color: transparent;
+  border-color: transparent;
+  color:black;
+}
+
+.course-box .ac_caption {
+   text-align: right;
+   font-weight: normal;
+   font-size: 0.5em;
+}
+
 .course-box-info {
   border-top: 5px solid #3498DB;
 }

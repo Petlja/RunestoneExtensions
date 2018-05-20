@@ -8,24 +8,22 @@ from docutils.parsers.rst import directives
 from docutils.parsers.rst import Directive
 import json
 import os
-
+from runestone.common.runestonedirective import add_i18n_js, add_codemirror_css_and_js, add_skulpt_js
 
 def setup(app):
     app.add_directive('karel', KarelDirective)
 
-    app.add_stylesheet('codemirror.css')
-    app.add_stylesheet('karel.css')
+    # add_i18n_js(app, {"en","sr-Cyrl"},"codemirror-i18n")
+    add_codemirror_css_and_js(app,'python')
+    add_skulpt_js(app)
 
-    app.add_javascript('codemirror.js')
+    app.add_stylesheet('karel.css')
 
     app.add_javascript('karelCorner.js')
     app.add_javascript('karelRobot.js')
     app.add_javascript('karelWorld.js')
     app.add_javascript('karelRobotDrawer.js')
-
     app.add_javascript('karelUI.js')
-    app.add_javascript('skulpt.min.js')
-    app.add_javascript('skulpt-stdlib.js')
     app.add_javascript('karel.js')
 
     app.add_node(KarelNode, html=(visit_karel_node, depart_karel_node))
