@@ -29,6 +29,9 @@ The implemented theme:
     at the ennd of the line containing  
     `html_static_path = ['_static'] + runestone_static_dirs()`
     - set `html_theme` to `bootstrap_petlja_theme` and comment out lines that set `templates_path` and `html_theme_path`
+    - at the end of `conf.py` add lines:  
+    `activecode_div_class = 'course-box course-box-problem course-content'`  
+    `activecode_hide_load_history = True`
 
 ## Notes for developers
 
