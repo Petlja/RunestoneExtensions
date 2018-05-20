@@ -17,8 +17,18 @@ The implemented theme:
 - In the folders of both repositories, run `pip install -e .` 
 - To update, just do `git pull` in the appropriate repository (or both)
 - In the `conf.py` of your project make those changes:
-    - add into `extensions` any Sphinx extension modules you want to use
-    - set `html_theme` to `bootstrap_petlja_theme` and comment out `templates_path` and `html_theme_path`
+    - add  
+    `import runestone_petlja_ext`  
+    after other imports
+    - add  
+    `+ runestone_petlja_ext.extensions()`  
+    at the end of the line containing  
+    `extensions = ['sphinx.ext.mathjax'] + runestone_extensions()`
+    - add  
+    `+ runestone_petlja_ext.static_dirs()`  
+    at the ennd of the line containing  
+    `html_static_path = ['_static'] + runestone_static_dirs()`
+    - set `html_theme` to `bootstrap_petlja_theme` and comment out lines that set `templates_path` and `html_theme_path`
 
 ## Notes for developers
 

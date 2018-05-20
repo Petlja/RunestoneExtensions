@@ -14,6 +14,7 @@ setup(
     license='GPLv3+',
     description='Runestone extensions by Petlja',
     long_description=open('README.md', encoding='utf-8').read(),
+	include_package_data = True,
     zip_safe=False,
     packages=['bootstrap_petlja_theme', 'runestone_petlja_ext'],
     package_data={'bootstrap_petlja_theme': [
@@ -24,8 +25,8 @@ setup(
         'static/css/*.css_t',
         'static/js/*.js_t',
         'static/font/*.*'
-    ]},
-    include_package_data=True,
+    ],
+		'runestone_petlja_ext': ['**/*.js', '**/*.css', '**/*.txt']},
 
     # See http://www.sphinx-doc.org/en/stable/theming.html#distribute-your-theme-as-a-python-package
     entry_points = {

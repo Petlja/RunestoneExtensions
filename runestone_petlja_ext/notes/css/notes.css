@@ -1,0 +1,17 @@
+.rst-level{
+    padding-left: 17px;
+    margin-left: -17px;
+    border-left: 2px solid;
+}
+
+.rst-level-1{
+    border-left-color: #18BC9C;
+}
+
+.rst-level-2{
+    border-left-color: #FBC02D;
+}
+
+.rst-level-3{
+    border-left-color: #e74c3c;
+}
