@@ -1,1 +1,1 @@
-PygameLib.init("_static");
+PygameLib.init("_static/pygamelib");
