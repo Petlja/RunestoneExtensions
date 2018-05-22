@@ -11,20 +11,20 @@ sys.path.append(os.getcwd())
 home_dir = os.getcwd()
 master_url = 'http://127.0.0.1:8000'
 master_app = 'runestone'
-serving_dir = "./build/activecodetest"
+serving_dir = "./build/pygamelibtest"
 dest = "./static"
 
 options(
     sphinx = Bunch(docroot=".",),
 
     build = Bunch(
-        builddir="./build/activecodetest",
+        builddir="./build/pygamelibtest",
         sourcedir="_sources",
-        outdir="./build/activecodetest",
+        outdir="./build/pygamelibtest",
         confdir=".",
         quiet=True,
-        project_name = "activecodetest",
-        template_args={'course_id': 'activecodetest',
+        project_name = "pygamelibtest",
+        template_args={'course_id': 'pygamelibtest',
                        'login_required':'false',
                        'appname':master_app,
                        'loglevel': 0,
@@ -32,7 +32,7 @@ options(
                        'use_services': 'false',
                        'python3': 'true',
                        'dburl': '',
-                       'basecourse': 'activecodetest',
+                       'basecourse': 'pygamelibtest',
                        'jobe_server': 'http://jobe2.cosc.canterbury.ac.nz',
                        'proxy_uri_runs': '/jobe/index.php/restapi/runs/',
                        'proxy_uri_files': '/jobe/index.php/restapi/files/'
