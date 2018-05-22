@@ -32,6 +32,7 @@ The implemented theme:
     - at the end of `conf.py` add lines:  
     `activecode_div_class = 'course-box course-box-problem course-content'`  
     `activecode_hide_load_history = True`
+    `mchoice_div_class = 'course-box course-box-question course-content'`
 
 ## Notes for developers
 
