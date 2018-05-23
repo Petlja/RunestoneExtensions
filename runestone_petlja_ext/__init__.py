@@ -12,8 +12,16 @@ def static_dirs():
     dirs = [dir for dir in dirs0 if os.path.exists(dir)]
     return dirs
 
-def config_values_for_components(glob):
-    glob['activecode_div_class'] = 'course-box course-box-problem course-content'
-    glob['activecode_hide_load_history'] = True
-    glob['mchoice_div_class'] = 'course-box course-box-question course-content'
+def create_style(divclass):
+    return 'course-box {} course-content'.format(divclass)
 
+def config_values_for_components(glob):
+    box_problem = 'course-box-problem'
+    box_question = 'course-box-question'
+    problem_style =  create_style(box_problem)
+    question_style = create_style(box_question)
+    glob['activecode_div_class'] = problem_style
+    glob['activecode_hide_load_history'] = True
+    glob['mchoice_div_class'] = question_style
+    glob['fitb_div_class'] = question_style
+    glob['dragndrop_div_class'] = problem_style
