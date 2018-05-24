@@ -15,7 +15,7 @@ var KarelImages = (function() {
 	    var name = this.imageNames[i];
 	    this.imageArray[name] = new Image();
 	    this.imageArray[name].onload = onImageLoad;
-	    this.imageArray[name].src = '_static/karel-' + name + '.png';
+	    this.imageArray[name].src = '_static/img/karel-' + name + '.png';
 	}
     }
 
