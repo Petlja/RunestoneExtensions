@@ -29,3 +29,6 @@ def config_values_for_components(glob):
     glob['codelens_div_class'] = question_style
     glob['clickable_div_class'] = question_style
     glob['shortanswer_div_class'] = question_style
+    glob['poll_div_class'] = question_style
+    glob['showeval_div_class'] = problem_style
+    glob['tabbed_div_class'] = problem_style
