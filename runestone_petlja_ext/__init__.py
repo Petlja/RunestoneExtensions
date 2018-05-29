@@ -25,3 +25,7 @@ def config_values_for_components(glob):
     glob['mchoice_div_class'] = question_style
     glob['fitb_div_class'] = question_style
     glob['dragndrop_div_class'] = problem_style
+    glob['tabbed_div_class'] = question_style
+    glob['codelens_div_class'] = question_style
+    glob['clickable_div_class'] = question_style
+    glob['shortanswer_div_class'] = question_style
