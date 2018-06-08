@@ -11,24 +11,83 @@
         </div>
 
 <textarea id="code" rows="24" cols="80">
-import pygame as pg
+# Napisi program koji crta cvet pomocu roze krugova ciji su centri
+# rasporedjeni u temenima pravilnog sestougla a poluprecnici su im
+# jednaki polovinama stranice tog sestougla. Cvet u centru ima jedan
+# zuti krug iste dimenzije.
 
-prozor_sirina, prozor_visina = 400, 400 
-vx, vy = 40, 20 # piksela u sekundi
-stranica = 50 
-boja = pg.Color('yellow')
-pozadina = pg.Color('black')
-pg.init()
-prozor = pg.display.set_mode([prozor_sirina, prozor_visina])
-while not pg.event.get(pg.QUIT):
-    t = 1.0 * pg.time.get_ticks() / 1000 # sekundi od inicijalizacije
-    x = (t * vx) % (prozor_sirina - stranica)
-    y = (t * vy) % (prozor_visina - stranica)
-    prozor.fill(pozadina)
-    pg.draw.rect(prozor, boja, pg.Rect(x, y, stranica, stranica))
-    pg.display.update()
-    pg.time.wait(50)
+import pygame as pg, math  
+
+# ukljucivanje rada biblioteke PyGame
+pg.init()  
+
+# boje
+BELA = (255, 255, 255)
+ZUTA = (255, 255, 0)
+ROZE = (255, 200, 200)
+
+# dimenzije ekrana
+sirina = 400
+visina = 400
+
+# podesavamo ekran i bojimo pozadinu u belo
+pg.display.set_caption("Cvet")
+ekran = pg.display.set_mode((sirina, visina))
+ekran.fill(BELA)
+
+# koordinate centra ekrana
+(cx, cy) = (sirina // 2, visina // 2)
+
+# precnici krugova - duzina stranice pravilnog sestougla u cijim se
+# temenima nalaze centri krugova
+a = 100
+# visina karakteristicnog trougla sestougla
+h = round(a * math.sqrt(3) / 2)
+
+# sva temena sestougla dele ove koordinate
+x1 = cx - a
+x2 = cx - a//2
+x3 = cx + a//2
+x4 = cx + a
+y1 = cy - h
+y2 = cy
+y3 = cy + h
+
+# koordinate temena sestougla
+O = (cx, cy)
+A1 = (x1, y2)
+A2 = (x2, y1)
+A3 = (x3, y1)
+A4 = (x4, y2)
+A5 = (x3, y3)
+A6 = (x2, y3)
+
+# poluprecnik krugova
+r = a // 2
+
+# iscrtavamo krugove
+pg.draw.circle(ekran, ZUTA, O, r, 0)
+pg.draw.circle(ekran, ROZE, A1, r, 0)
+pg.draw.circle(ekran, ROZE, A2, r, 0)
+pg.draw.circle(ekran, ROZE, A3, r, 0)
+pg.draw.circle(ekran, ROZE, A4, r, 0)
+pg.draw.circle(ekran, ROZE, A5, r, 0)
+pg.draw.circle(ekran, ROZE, A6, r, 0)
+
+# prikazujemo nacrtano na ekranu
+pg.display.flip()
+
+# program radi sve dok ne nastupi dogadjaj pg.QUIT
+kraj = False
+while not kraj:
+    for dogadjaj in pg.event.get():
+        if dogadjaj.type == pg.QUIT:
+            kraj = True
+    pg.time.wait(100)
+
+# iskljucivanje rada biblioteke PyGame
 #pg.quit()
+    
 </textarea>
 <pre id="output"></pre>
 

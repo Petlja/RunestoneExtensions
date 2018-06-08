@@ -97,3 +97,7 @@ body {
 .CodeMirror {
   margin-bottom: 10px;
 }
+
+.CodeMirror  .shaded {
+  background-color: gray;
+}

@@ -8,7 +8,12 @@ var PygameLib = {};
         if (event.key == "Escape")  {
             e[0] = PygameLib.constants.QUIT;
         }
-        PygameLib.eventQueue.unshift(e);
+
+        // Uncaught TypeError: Cannot read property 'unshift' of undefined
+        // Before executing the pygame_init() method
+        if(PygameLib.eventQueue){
+            PygameLib.eventQueue.unshift(e);
+        }
     }
 
     PygameLib.init = function (baseURL) {
@@ -65,6 +70,10 @@ var PygameLib = {};
         PygameLib.ColorType = mod.Color;
         mod.Rect = Sk.misceval.buildClass(mod, rect_type_f, 'Rect', []);
         PygameLib.RectType = mod.Rect;
+        mod.quit = new Sk.builtin.func(function () {
+            //TODO
+            return;
+        });
         return mod;
     }
 
@@ -163,6 +172,14 @@ var PygameLib = {};
     get_flags.co_name = new Sk.builtins['str']('get_flags');
     get_flags.co_varnames = ['self'];
     
+    function update(self) {
+        self.main_canvas.width = self.offscreen_canvas.width;
+        self.main_canvas.height = self.offscreen_canvas.height;
+        self.main_context.drawImage(self.offscreen_canvas, 0, 0);
+    }
+    update.co_name = new Sk.builtins['str']('update');
+    update.co_varnames = ['self'];
+
     var surface$1 = function $Surface$class_outer(gbl, loc) {
         loc.__init__ = new Sk.builtins.function(init$1, gbl);
         loc.__repr__ = new Sk.builtins.function(repr$1, gbl);
@@ -172,11 +189,7 @@ var PygameLib = {};
             ctx.fillStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
             ctx.fillRect(0, 0, self.width, self.height);
         });
-        loc.update = new Sk.builtin.func(function(self) {
-            self.main_canvas.width = self.offscreen_canvas.width;
-            self.main_canvas.height = self.offscreen_canvas.height;
-            self.main_context.drawImage(self.offscreen_canvas, 0, 0);
-        });
+        loc.update = new Sk.builtins.function(update, gbl);
         loc.get_width = new Sk.builtins.function(get_width, gbl);
         loc.get_height = new Sk.builtins.function(get_height, gbl);
         loc.get_size = new Sk.builtins.function(get_size, gbl);
@@ -198,6 +211,12 @@ var PygameLib = {};
         mod.update = new Sk.builtin.func(function() {
             Sk.misceval.callsim(mod.surface.update, mod.surface);
         });
+        mod.flip = new Sk.builtin.func(function() {
+            Sk.misceval.callsim(mod.surface.update, mod.surface);
+        })
+        mod.set_caption = new Sk.builtin.func(function() {
+            return;
+        });
         return mod;
     }
 
@@ -210,7 +229,7 @@ var PygameLib = {};
         Sk.builtin.pyCheckArgs('get_event', arguments, 0, 1, false, false);
         var list = [];
         var t,d;
-        var types_js = Sk.ffi.remapToJs(types);
+        var types_js = types ? Sk.ffi.remapToJs(types) : [];
         var queue = types ? (Sk.abstr.typeName(types) == "list" ? PygameLib.eventQueue.filter(e => types_js.includes(e[0])) : PygameLib.eventQueue.filter(e => e[0] == types_js))
                         : PygameLib.eventQueue;
 
@@ -367,8 +386,23 @@ var PygameLib = {};
         }
         else {
             color_js = Sk.ffi.remapToJs(color);
+            if (color_js.length == 3) color_js.push(1);
         }
         return color_js;
+    }
+
+    var extract_rect = function(rect) {
+        var rect_js = [0, 0, 0, 0];
+        if (Sk.abstr.typeName(rect) == "Rect") {
+            rect_js[0] = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'left', false));
+            rect_js[1]  = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'top', false));
+            rect_js[2] = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'width', false));
+            rect_js[3] = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'height', false));
+        } 
+        else {
+            rect_js = Sk.ffi.remapToJs(rect);
+        }
+        return rect_js;
     }
 
     //returns Rect object used as bounding box for drawing functions
@@ -387,11 +421,13 @@ var PygameLib = {};
         var ctx = surface.context2d;
         var color_js = extract_color(color);
         var width_js = Sk.ffi.remapToJs(width);
-        var left = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'left', false));
-        var top  = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'top', false));
-        var width = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'width', false));
-        var height = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'height', false));
+        var rect_js = extract_rect(rect);
         
+        var left = rect_js[0];
+        var top = rect_js[1];
+        var width = rect_js[2];
+        var height = rect_js[3];
+
         if (width_js) {     
             ctx.lineWidth = width_js;
             ctx.strokeStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
@@ -400,7 +436,8 @@ var PygameLib = {};
             ctx.fillStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
             ctx.fillRect(left, top, width, height);
         }
-        return rect;
+
+        return Sk.misceval.callsim(PygameLib.RectType, Sk.builtin.tuple([left, top]), Sk.builtin.tuple([width, height]));
     }
 
     //pygame.draw.polygon()
@@ -448,23 +485,19 @@ var PygameLib = {};
         var ctx = surface.context2d;
         var width_js = Sk.ffi.remapToJs(width);
         var color_js = extract_color(color);
-        var left = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'left', false));
-        var top  = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'top', false));
-        var w = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'width', false));
-        var h = Sk.ffi.remapToJs(Sk.abstr.gattr(rect, 'height', false));
-
+        var rect_js = extract_rect(rect);
         var angles = [0, 0]
         angles[0] = Sk.ffi.remapToJs(start_angle)
         angles[1] = Sk.ffi.remapToJs(stop_angle)
         var center = [0, 0]
-        center[0] = left + w / 2;
-        center[1] = top + h / 2;
+        center[0] = rect_js[0] + rect_js[2] / 2;
+        center[1] = rect_js[1] + rect_js[3] / 2;
 
         ctx.beginPath();
         if (Math.abs(angles[1] - 2 * Math.PI) < 1e-5) {
             angles[1] = 0;
         }
-        ctx.ellipse(center[0], center[1], w / 2, h / 2, 0, angles[0], 2 * Math.PI - angles[1], true);
+        ctx.ellipse(center[0], center[1], rect_js[2] / 2, rect_js[3] / 2, 0, -angles[0], -angles[1], true);
 
         if (width_js) {     
             ctx.lineWidth = width_js;
@@ -475,7 +508,7 @@ var PygameLib = {};
             ctx.fill();
         }  
 
-        return rect;
+        return Sk.misceval.callsim(PygameLib.RectType, Sk.builtin.tuple([rect_js[0], rect_js[1]]), Sk.builtin.tuple([rect_js[2], rect_js[3]]));
     }
 
     //pygame.draw.line()
