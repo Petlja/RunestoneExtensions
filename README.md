@@ -16,7 +16,7 @@ The implemented theme:
 - Clone this repositori and the repository https://github.com/Petlja/RunestoneComponents-Petlja 
 - In the folders of both repositories, run `pip install -e .` 
 - To update, just do `git pull` in the appropriate repository (or both)
-- In the `conf.py` of your project make those changes:
+- In the `conf.py` of your interactive book project make those changes (if someone other has not already done so):
     - after other imports add  
       `import runestone_petlja_ext`
     - at the end of the line  
