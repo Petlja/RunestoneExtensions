@@ -12,10 +12,12 @@ The implemented theme:
 
 ## Using Extensions to RunestoneComponents in your interactive book project
 
-- If you already have the `runestone` package installed in your environment, remove it with `pip uninstall runestone`
+- If you already have the `runestone` package installed in your environment, remove it with  
+`pip uninstall runestone`
 - Clone this repositori and the repository https://github.com/Petlja/RunestoneComponents-Petlja 
-- In the folders of both repositories, run `pip install -e .` 
-- To update, just do `git pull` in the appropriate repository (or both)
+- In both folders where you have cloned those two repositories, run  
+`pip install -e .` 
+- When you need to update installed packages, just do `git pull` in both folders
 - In the `conf.py` of your interactive book project make those changes (if someone other has not already done so):
     - after other imports add  
       `import runestone_petlja_ext`
@@ -31,6 +33,7 @@ The implemented theme:
       `html_theme = 'bootstrap_petlja_theme'` 
     - at the end of `conf.py` add line 
     `runestone_petlja_ext.config_values_for_components(globals())`
+
 
 ## Notes for developers
 
