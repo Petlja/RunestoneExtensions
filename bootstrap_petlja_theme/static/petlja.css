@@ -101,3 +101,7 @@ body {
 .CodeMirror  .shaded {
   background-color: gray;
 }
+
+.test-button, .run-button {
+  margin-right: 5px;
+}
