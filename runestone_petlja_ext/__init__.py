@@ -32,3 +32,4 @@ def config_values_for_components(glob):
     glob['poll_div_class'] = question_style
     glob['showeval_div_class'] = problem_style
     glob['tabbed_div_class'] = problem_style
+    glob['accessibility_style'] = 'none'
