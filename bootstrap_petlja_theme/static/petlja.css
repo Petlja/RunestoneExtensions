@@ -99,7 +99,7 @@ body {
 }
 
 .CodeMirror  .shaded {
-  background-color: gray;
+  background-color: #d1e0dd;
 }
 
 .test-button, .run-button {
