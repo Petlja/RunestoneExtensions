@@ -8,7 +8,7 @@ var PygameLib = {};
         if (event.key == "Escape")  {
             e[0] = PygameLib.constants.QUIT;
         }
-
+        
         // Uncaught TypeError: Cannot read property 'unshift' of undefined
         // Before executing the pygame_init() method
         if(PygameLib.eventQueue){
@@ -71,7 +71,7 @@ var PygameLib = {};
         mod.Rect = Sk.misceval.buildClass(mod, rect_type_f, 'Rect', []);
         PygameLib.RectType = mod.Rect;
         mod.quit = new Sk.builtin.func(function () {
-            //TODO
+            $(PygameLib.modalDiv).modal('hide');
             return;
         });
         return mod;
@@ -103,6 +103,111 @@ var PygameLib = {};
         return target;
     }
 
+    function createArrows(div) {
+        var arrows = new Array(4);
+        var direction = ["left", "right", "up", "down"];
+
+        for (var i = 0; i < 4; i++) {
+            arrows[i] = document.createElement("span");
+            div.appendChild(arrows[i]);
+            $(arrows[i]).addClass("btn btn-primary");
+            var ic = document.createElement("i");
+            $(ic).addClass("fa fa-arrow-" + direction[i]);
+            arrows[i].appendChild(ic);             
+        }
+
+        var insertEvent = function(dir) {
+            var e = [];
+            switch (dir) {
+                case 0:
+                    e = [PygameLib.constants.K_LEFT, { key: "Left" }];
+                    break;
+                case 1:
+                    e = [PygameLib.constants.K_RIGHT, { key: "Right" }];
+                    break;
+                case 2:
+                    e = [PygameLib.constants.K_UP, { key: "Up" }];
+                    break;
+                case 3:
+                    e = [PygameLib.constants.K_DOWN, { key: "Down" }];
+                    break;
+            }
+            PygameLib.eventQueue.unshift(e);
+        }
+
+        var swapIcon = function(id) {
+            $(arrows[id]).click();
+            $(arrows[id].firstChild).removeClass("fa-arrow-" + direction[id]).addClass("fa-arrow-circle-" + direction[id]);        
+        }
+
+        var returnIcon = function(id) {
+            $(arrows[id].firstChild).removeClass("fa-arrow-circle-" + direction[id]).addClass("fa-arrow-" + direction[id]);
+        }
+
+        $(arrows[0]).on('mousedown', function() {
+            insertEvent(0);
+            swapIcon(0);
+        });
+        $(arrows[0]).on('mouseup', function() {
+            returnIcon(0);
+        });
+        $(arrows[1]).on('mousedown', function() {
+            insertEvent(1);
+            swapIcon(1);
+        });
+        $(arrows[1]).on('mouseup', function() {
+            returnIcon(1);
+        });
+        $(arrows[2]).on('mousedown', function() {
+            insertEvent(2);
+            swapIcon(2);
+        });
+        $(arrows[2]).on('mouseup', function() {
+            returnIcon(2);
+        });
+        $(arrows[3]).on('mousedown', function() {
+            insertEvent(3);
+            swapIcon(3);
+        });
+        $(arrows[3]).on('mouseup', function() {
+            returnIcon(3);
+        });
+
+        $(document).keydown(function(e) {
+            switch (e.which) {
+                case 37:
+                    swapIcon(0);
+                    break;
+                case 38:
+                    swapIcon(2);    
+                    break;
+                case 39:
+                    swapIcon(1);
+                    break;
+                case 40:
+                    swapIcon(3);
+                    break;
+            }
+        });
+
+        $(document).keyup(function(e) {
+            switch (e.which) {
+                case 37:
+                    returnIcon(0);
+                    break;
+                case 38:
+                    returnIcon(2);
+                    break;
+                case 39:
+                    returnIcon(1);
+                    break;
+                case 40:
+                    returnIcon(3);
+                    break;
+            }
+        });
+    }
+
     // Surface((width, height))
     var init$1 = function $__init__123$(self, size) {
         Sk.builtin.pyCheckArgs('__init__', arguments, 2, 5, false, false);
@@ -112,14 +217,83 @@ var PygameLib = {};
         self.main_canvas = document.createElement("canvas");
         self.main_canvas.width = self.width;
         self.main_canvas.height = self.height;
-        self.main_canvas.style.position = "relative";
-        self.main_canvas.style.display = "block";
+        // self.main_canvas.style.position = "relative";
+        // self.main_canvas.style.display = "block";
+        $(self.main_canvas).css("border", "1px solid blue");
         // self.main_canvas.style.setProperty("margin-top",...);
         // self.main_canvas.style.setProperty("z-index", ...);
        
         var currentTarget = resetTarget();
+        $(currentTarget).width(1.2 * self.width);
+        //$(currentTarget).height(self.height);
+        var div1 = document.createElement("div");
+        currentTarget.appendChild(div1);
+        PygameLib.modalDiv = div1;
+        $(div1).addClass("modal");
+        $(div1).width(1.1 * self.width);
+        $(div1).css('overflow', 'hidden');
+        // var modal = $(".modal");
+        // var body = $(window);
+        // // Get modal size
+        // var w = modal.width();
+        // var h = modal.height();
+        // // Get window size
+        // var bw = body.width();
+        // var bh = body.height();
+        
+        // // Update the css and center the modal on screen
+        // modal.css({
+        //     "position": "absolute",
+        //     "top": ((bh - h) / 2) + "px",
+        //     "left": ((bw - w) / 2) + "px"
+        // });
 
-        currentTarget.appendChild(self.main_canvas)
+        var btn1 = document.createElement("span");
+        $(btn1).addClass("btn btn-primary pull-right");
+        var ic = document.createElement("i");
+        $(ic).addClass("fa fa-times");
+        btn1.appendChild(ic);
+
+        $(btn1).on('click', function(e) {
+            var e = [PygameLib.constants.QUIT, { key: "Escape" }];
+            PygameLib.eventQueue.unshift(e);
+        });
+
+        var div2 = document.createElement("div");
+        $(div2).addClass("mode-dialog");
+        $(div2).attr("role", "document");
+        div1.appendChild(div2);
+
+        var div3 = document.createElement("div");
+        $(div3).addClass("modal-content");
+        div2.appendChild(div3);
+
+        var div4 = document.createElement("div");
+        $(div4).addClass("modal-header");
+        var div5 = document.createElement("div");
+        $(div5).addClass("modal-body");
+        var div6 = document.createElement("div");
+        $(div6).addClass("modal-footer");
+        var header = document.createElement("h5");
+        $(header).addClass("modal-title");
+        $(header).html(PygameLib.caption);
+
+        div3.appendChild(div4);
+        div3.appendChild(div5);
+        div3.appendChild(div6);
+
+        div4.appendChild(header);
+
+        div5.appendChild(self.main_canvas);
+
+        div4.appendChild(btn1);
+
+        createArrows(div6);
+
+        $(div1).modal({
+            backdrop: 'static',
+            keyboard: false
+        });
 
         self.main_context = self.main_canvas.getContext("2d");
         self.offscreen_canvas = document.createElement('canvas');
@@ -214,8 +388,9 @@ var PygameLib = {};
         mod.flip = new Sk.builtin.func(function() {
             Sk.misceval.callsim(mod.surface.update, mod.surface);
         })
-        mod.set_caption = new Sk.builtin.func(function() {
-            return;
+        mod.set_caption = new Sk.builtin.func(function(caption) {
+            //$('.modal-title').html(Sk.ffi.remapToJs(caption));
+            PygameLib.caption = Sk.ffi.remapToJs(caption);
         });
         return mod;
     }
@@ -572,7 +747,7 @@ var PygameLib = {};
             for (var i = 0; i < pointlist_js.length - 1; i++) {
                 draw_line(surface, color, Sk.builtin.tuple([pointlist_js[i][0], pointlist_js[i][1]]), Sk.builtin.tuple([pointlist_js[i + 1][0], pointlist_js[i + 1][1]]), width);
             }
-            return bbox(0, 0, 0, 0); // dummy - it's the case when we draw line as a polygon
+            return bbox(0, 0, 0, 0);
         }
         
         if (width_js) {
