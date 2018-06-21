@@ -16,6 +16,11 @@ body {
   height: 100px;
 }
 
+.modal-body {
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
 /* Fonts */
 body {
     font-family: "Ubuntu";
@@ -94,6 +99,10 @@ body {
   margin-bottom: 10px;
 }
 
+.btn-arrow {
+  margin-bottom: 0px;
+}
+
 .CodeMirror {
   margin-bottom: 10px;
 }
@@ -108,4 +117,8 @@ body {
 
 div.visible-ac-canvas {
   display: inline-block;
+}
+
+div.modal-header:before, div.modal-header:after {
+  content: none;
 }

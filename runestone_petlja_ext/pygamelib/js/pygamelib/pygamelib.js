@@ -110,7 +110,7 @@ var PygameLib = {};
         for (var i = 0; i < 4; i++) {
             arrows[i] = document.createElement("span");
             div.appendChild(arrows[i]);
-            $(arrows[i]).addClass("btn btn-primary");
+            $(arrows[i]).addClass("btn btn-primary btn-arrow");
             var ic = document.createElement("i");
             $(ic).addClass("fa fa-arrow-" + direction[i]);
             arrows[i].appendChild(ic);             
@@ -224,29 +224,13 @@ var PygameLib = {};
         // self.main_canvas.style.setProperty("z-index", ...);
        
         var currentTarget = resetTarget();
-        $(currentTarget).width(1.2 * self.width);
-        //$(currentTarget).height(self.height);
+        
         var div1 = document.createElement("div");
         currentTarget.appendChild(div1);
         PygameLib.modalDiv = div1;
         $(div1).addClass("modal");
-        $(div1).width(1.1 * self.width);
-        $(div1).css('overflow', 'hidden');
-        // var modal = $(".modal");
-        // var body = $(window);
-        // // Get modal size
-        // var w = modal.width();
-        // var h = modal.height();
-        // // Get window size
-        // var bw = body.width();
-        // var bh = body.height();
-        
-        // // Update the css and center the modal on screen
-        // modal.css({
-        //     "position": "absolute",
-        //     "top": ((bh - h) / 2) + "px",
-        //     "left": ((bw - w) / 2) + "px"
-        // });
+        // $(currentTarget).width(self.width + 40);
+        $(div1).css("text-align", "center");
 
         var btn1 = document.createElement("span");
         $(btn1).addClass("btn btn-primary pull-right");
@@ -260,7 +244,9 @@ var PygameLib = {};
         });
 
         var div2 = document.createElement("div");
-        $(div2).addClass("mode-dialog");
+        $(div2).addClass("modal-dialog");
+        $(div2).css("display", "inline-block");
+        $(div2).width(self.width + 42);
         $(div2).attr("role", "document");
         div1.appendChild(div2);
 
@@ -451,6 +437,14 @@ var PygameLib = {};
 
     }
 
+    function wait(ms) {
+        var start = Date.now(),
+            now = start;
+        while (now - start < ms) {
+          now = Date.now();
+        }
+    }
+
     PygameLib.event_module = function (name) {
         var mod = {};
         mod.get = new Sk.builtin.func(get_event);
@@ -458,6 +452,30 @@ var PygameLib = {};
         PygameLib.EventType = mod.EventType;
         mod.Event = new Sk.builtin.func(function(type,dict) {
             return Sk.misceval.callsim(mod.EventType, type, dict)
+        });
+        
+        mod.wait = new Sk.builtin.func(function() {
+            return new Sk.misceval.promiseToSuspension(new Promise(function(resolve) {
+                var f = function() {
+                    if (PygameLib.eventQueue.length) {
+                        var event = PygameLib.eventQueue.splice(0, 1)[0];
+                        var type = Sk.ffi.remapToPy(event[0]);
+                        var dictjs = event[1];
+                        kvs = [];
+                        for (k in dictjs) {
+                            kvs.push(Sk.ffi.remapToPy(k));
+                            kvs.push(Sk.ffi.remapToPy(dictjs[k]));
+                        }
+                        var dict = new Sk.builtin.dict(kvs);
+                        var e = Sk.misceval.callsim(PygameLib.EventType, type, dict);
+                        resolve(e);
+                    }
+                    else 
+                        Sk.setTimeout(f, 10);
+                }
+
+                Sk.setTimeout(f, 10);
+            }));
         });
         return mod;
     }

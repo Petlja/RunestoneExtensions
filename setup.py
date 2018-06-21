@@ -24,7 +24,7 @@ setup(
         'static/js/*.js',
         'static/css/*.css_t',
         'static/js/*.js_t',
-        'static/font/*.*'
+        'static/fonts/*.*'
     ],
 		'runestone_petlja_ext': ['**/*.js', '**/*.css', '**/*.txt']},
 
