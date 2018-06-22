@@ -132,5 +132,5 @@ div.modal-header {
 }
 
 i.fa {
-  font-family: "FontAwesome";
+  font-family: "FontAwesome" !important;
 }
