@@ -2,18 +2,40 @@ var PygameLib = {};
 
 (function () {
     PygameLib.eventSource = typeof window !== 'undefined' ? window : global;
+    
+    var createKeyboardEvent = function(event) {
+        var e;
+        switch (event.which) {
+            case 27:
+                e = [PygameLib.constants.QUIT, { key: PygameLib.constants.K_ESCAPE }];
+                break;
+            case 37:
+                e = [PygameLib.constants.KEYDOWN, { key: PygameLib.constants.K_LEFT }];
+                break;
+            case 38:
+                e = [PygameLib.constants.KEYDOWN, { key: PygameLib.constants.K_UP }];
+                break;
+            case 39:
+                e = [PygameLib.constants.KEYDOWN, { key: PygameLib.constants.K_RIGHT }];
+                break;
+            case 40:
+                e = [PygameLib.constants.KEYDOWN, { key: PygameLib.constants.K_DOWN }];
+                break;
+            default:
+                e = [PygameLib.constants.KEYDOWN, { key: event.which }];
+        }
+        return e;
+    }
 
     function keydownEventListener(event) {
-        var e = [PygameLib.constants.KEYDOWN, { key: event.key }];
-        if (event.key == "Escape")  {
-            e[0] = PygameLib.constants.QUIT;
-        }
-        
+        var e = createKeyboardEvent(event);
         // Uncaught TypeError: Cannot read property 'unshift' of undefined
         // Before executing the pygame_init() method
         if(PygameLib.eventQueue){
             PygameLib.eventQueue.unshift(e);
         }
+        console.log(PygameLib.eventQueue.length);
+        return false;
     }
 
     PygameLib.init = function (baseURL) {
@@ -55,6 +77,7 @@ var PygameLib = {};
         pygame_m.$d['draw'] = display_m.$d['draw'];
         // testiranja radi stavili smo nešto u queue na početku
         PygameLib.eventQueue = [];
+        PygameLib.eventTimer = {};
     }
 
     //pygame
@@ -88,6 +111,23 @@ var PygameLib = {};
         mod.get_ticks = new Sk.builtin.func(function() {
             return Sk.ffi.remapToPy(new Date() - PygameLib.initial_time);
         });
+        mod.set_timer = new Sk.builtin.func(function(eventid, milliseconds) {
+            var event = Sk.ffi.remapToJs(eventid);
+            var ms = Sk.ffi.remapToJs(milliseconds);
+            if (PygameLib.eventTimer[event]) {
+                clearInterval(PygameLib.eventTimer[event].timer);
+            }
+            else {
+                PygameLib.eventTimer[event] = {};
+                PygameLib.eventTimer[event].f = function () {
+                    var e = [event, { }];
+                    PygameLib.eventQueue.unshift(e);
+                }
+            }
+            if (ms) {
+                PygameLib.eventTimer[event].timer = setInterval(PygameLib.eventTimer[event].f, ms);
+            }
+        });
         return mod;
     }
 
@@ -120,16 +160,16 @@ var PygameLib = {};
             var e = [];
             switch (dir) {
                 case 0:
-                    e = [PygameLib.constants.K_LEFT, { key: "Left" }];
+                    e = [PygameLib.constants.KEYDOWN, { key: PygameLib.constants.K_LEFT }];
                     break;
                 case 1:
-                    e = [PygameLib.constants.K_RIGHT, { key: "Right" }];
+                    e = [PygameLib.constants.KEYDOWN, { key: PygameLib.constants.K_RIGHT }];
                     break;
                 case 2:
-                    e = [PygameLib.constants.K_UP, { key: "Up" }];
+                    e = [PygameLib.constants.KEYDOWN, { key: PygameLib.constants.K_UP }];
                     break;
                 case 3:
-                    e = [PygameLib.constants.K_DOWN, { key: "Down" }];
+                    e = [PygameLib.constants.KEYDOWN, { key: PygameLib.constants.K_DOWN }];
                     break;
             }
             PygameLib.eventQueue.unshift(e);
@@ -179,7 +219,7 @@ var PygameLib = {};
                     swapIcon(0);
                     break;
                 case 38:
-                    swapIcon(2);    
+                    swapIcon(2);   
                     break;
                 case 39:
                     swapIcon(1);
@@ -208,6 +248,26 @@ var PygameLib = {};
         });
     }
 
+    var mouseEventListener = function(event) {
+        var totalOffsetX = 0;
+        var totalOffsetY = 0;
+        var canvasX = 0;
+        var canvasY = 0;
+        var currentElement = this;
+
+        do{
+            totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+            totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+        }
+        while(currentElement = currentElement.offsetParent)
+
+        canvasX = event.pageX - totalOffsetX;
+        canvasY = event.pageY - totalOffsetY;
+
+        var e = [PygameLib.constants.MOUSEBUTTONDOWN, {key: PygameLib.constants.MOUSEBUTTONDOWN, pos: [canvasX, canvasY]}];
+        PygameLib.eventQueue.unshift(e);
+    }
+
     // Surface((width, height))
     var init$1 = function $__init__123$(self, size) {
         Sk.builtin.pyCheckArgs('__init__', arguments, 2, 5, false, false);
@@ -217,11 +277,8 @@ var PygameLib = {};
         self.main_canvas = document.createElement("canvas");
         self.main_canvas.width = self.width;
         self.main_canvas.height = self.height;
-        // self.main_canvas.style.position = "relative";
-        // self.main_canvas.style.display = "block";
+        self.main_canvas.addEventListener('click', mouseEventListener);
         $(self.main_canvas).css("border", "1px solid blue");
-        // self.main_canvas.style.setProperty("margin-top",...);
-        // self.main_canvas.style.setProperty("z-index", ...);
        
         var currentTarget = resetTarget();
         
@@ -233,7 +290,7 @@ var PygameLib = {};
         $(div1).css("text-align", "center");
 
         var btn1 = document.createElement("span");
-        $(btn1).addClass("btn btn-primary pull-right");
+        $(btn1).addClass("btn btn-primary btn-xs pull-right");
         var ic = document.createElement("i");
         $(ic).addClass("fa fa-times");
         btn1.appendChild(ic);
@@ -260,19 +317,24 @@ var PygameLib = {};
         $(div5).addClass("modal-body");
         var div6 = document.createElement("div");
         $(div6).addClass("modal-footer");
-        var header = document.createElement("h5");
-        $(header).addClass("modal-title");
+        var div7 = document.createElement("div");
+        $(div7).addClass("col-md-8");
+        var div8 = document.createElement("div");
+        $(div8).addClass("col-md-4");
+        var header = document.createElement("h4");
+        $(header).addClass("modal-title pull-left");
         $(header).html(PygameLib.caption);
 
         div3.appendChild(div4);
         div3.appendChild(div5);
         div3.appendChild(div6);
 
-        div4.appendChild(header);
+        div4.appendChild(div7);
+        div4.appendChild(div8);
+        div7.appendChild(header);
+        div8.appendChild(btn1);
 
         div5.appendChild(self.main_canvas);
-
-        div4.appendChild(btn1);
 
         createArrows(div6);
 
@@ -375,7 +437,7 @@ var PygameLib = {};
             Sk.misceval.callsim(mod.surface.update, mod.surface);
         })
         mod.set_caption = new Sk.builtin.func(function(caption) {
-            //$('.modal-title').html(Sk.ffi.remapToJs(caption));
+            if ($('.modal-title')) $('.modal-title').html(Sk.ffi.remapToJs(caption));
             PygameLib.caption = Sk.ffi.remapToJs(caption);
         });
         return mod;
@@ -435,14 +497,6 @@ var PygameLib = {};
         $loc.__repr__.co_name = new Sk.builtins['str']('__repr__');
         $loc.__repr__.co_varnames = ['self'];
 
-    }
-
-    function wait(ms) {
-        var start = Date.now(),
-            now = start;
-        while (now - start < ms) {
-          now = Date.now();
-        }
     }
 
     PygameLib.event_module = function (name) {

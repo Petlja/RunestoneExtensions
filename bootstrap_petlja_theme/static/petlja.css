@@ -119,6 +119,18 @@ div.visible-ac-canvas {
   display: inline-block;
 }
 
-div.modal-header:before, div.modal-header:after {
-  content: none;
+div.modal-header {
+  display: block;
+}
+
+.navbar>.container {
+  display: block;
+}
+
+.modal-dialog {
+  max-width: none;
+}
+
+i.fa {
+  font-family: "FontAwesome";
 }
