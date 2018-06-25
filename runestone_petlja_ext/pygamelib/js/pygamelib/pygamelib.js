@@ -2,7 +2,13 @@ var PygameLib = {};
 
 (function () {
     PygameLib.eventSource = typeof window !== 'undefined' ? window : global;
-    
+    PygameLib.running = false;
+
+    PygameLib.endProgram = function() {
+        PygameLib.running = false;
+        $('.modal').modal('hide');
+    }
+
     var createKeyboardEvent = function(event) {
         var e;
         switch (event.which) {
@@ -32,8 +38,11 @@ var PygameLib = {};
         // Uncaught TypeError: Cannot read property 'unshift' of undefined
         // Before executing the pygame_init() method
         if(PygameLib.eventQueue){
-            PygameLib.eventQueue.unshift(e);
+            if(!('repeat' in event) || !event.repeat) { // Pygame considers autorepeat is turnd of by default
+                PygameLib.eventQueue.unshift(e);
+            }
         }
+        if (PygameLib.running) event.preventDefault();
         return false;
     }
 
@@ -77,6 +86,7 @@ var PygameLib = {};
         // testiranja radi stavili smo nešto u queue na početku
         PygameLib.eventQueue = [];
         PygameLib.eventTimer = {};
+        PygameLib.running = true;
     }
 
     //pygame
@@ -93,7 +103,7 @@ var PygameLib = {};
         mod.Rect = Sk.misceval.buildClass(mod, rect_type_f, 'Rect', []);
         PygameLib.RectType = mod.Rect;
         mod.quit = new Sk.builtin.func(function () {
-            $(PygameLib.modalDiv).modal('hide');
+            PygameLib.endProgram();
             return;
         });
         return mod;
