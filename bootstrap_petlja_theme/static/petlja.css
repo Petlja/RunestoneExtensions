@@ -117,6 +117,7 @@ body {
 
 div.visible-ac-canvas {
   display: inline-block;
+  border: none;
 }
 
 div.modal-header {
