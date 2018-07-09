@@ -101,6 +101,7 @@ body {
 
 .btn-arrow {
   margin-bottom: 0px;
+  display: none;
 }
 
 .CodeMirror {
