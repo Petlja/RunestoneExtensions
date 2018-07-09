@@ -117,8 +117,13 @@ body {
 }
 
 div.visible-ac-canvas {
-  display: inline-block;
+  display: block;
   border: none;
+}
+
+div.visible-ac-canvas canvas {
+  margin: auto;
+  display: block;
 }
 
 div.modal-header {
