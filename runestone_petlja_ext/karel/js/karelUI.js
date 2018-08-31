@@ -46,7 +46,7 @@ $(document).ready(function() {
         var textarea = $(this).find(".codeArea")[0];
         var configarea = $(this).find(".configArea")[0];
 
-        var editor = CodeMirror.fromTextArea(textarea,{lineNumbers: true,
+        var editor = CodeMirror.fromTextArea(textarea,{lineNumbers: false,
             mode: "python", indentUnit: 4,
             matchBrackets: true, autoMatchParens: true,
             extraKeys: {"Tab": "indentMore", "Shift-Tab": "indentLess"}});
