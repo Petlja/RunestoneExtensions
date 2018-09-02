@@ -66,6 +66,17 @@ $(document).ready(function() {
             reset();
         });
 
+        $(this).find(".blockly-button").click(function () {
+            var code = editor.getValue();
+            var bpm = new BlocklPyModal();
+            bpm.open("Карел", 700, 500, code, '_static/blockly/',
+               function(src) {
+                  if(src) {
+                    editor.setValue("from karel import * \n" + src);
+                  }
+               });
+        });
+
         function outf(text){
             console.log(text);
         }

@@ -1,6 +1,6 @@
 import os
 
-modules = ['karel', 'notes', 'pygamelib']
+modules = ['karel', 'notes', 'pygamelib','blockpylib']
 
 def extensions():
     return ['runestone_petlja_ext.' + module for module in modules]

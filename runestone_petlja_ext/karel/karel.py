@@ -41,7 +41,8 @@ TEMPLATE_START = """
 TEMPLATE_END = """
     <div data-component="karel" id="%(divid)s" class="karel_section">
         <div class="karel_actions col-md-12"><button class="btn btn-success run-button">Покрени програм</button>
-        <button class="btn btn-default reset-button">Врати на почетак</button></div>
+        <button class="btn btn-default reset-button">Врати на почетак</button>
+        <button class="btn btn-default blockly-button">Blockly</button></div>
         <div style="overflow: hidden;" class="karel_actions col-md-12" >
             <section class="col-md-12">
                 <article>
