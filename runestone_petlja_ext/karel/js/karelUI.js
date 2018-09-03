@@ -67,12 +67,12 @@ $(document).ready(function() {
         });
 
         $(this).find(".blockly-button").click(function () {
-            var code = editor.getValue();
+            var code = editor.getValue().replace(/\?\?\?/g,"___");
             var bpm = new BlocklPyModal();
             bpm.open("Карел", 700, 500, code, '_static/blockly/',
                function(src) {
                   if(src) {
-                    editor.setValue("from karel import * \n" + src);
+                    editor.setValue("from karel import * \n" + src.replace(/\_\_\_/g,"???"));
                   }
                });
         });
