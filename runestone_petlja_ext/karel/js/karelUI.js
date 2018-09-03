@@ -67,7 +67,8 @@ $(document).ready(function() {
         });
 
         $(this).find(".blockly-button").click(function () {
-            var code = editor.getValue().replace(/\?\?\?/g,"___");
+            var code = editor.getValue().replace(/\?\?\?\s+/g, "___ ")
+            .replace(/\?\?\?/g,"___");
             var bpm = new BlocklPyModal();
             bpm.open("Карел", 700, 500, code, '_static/blockly/',
                function(src) {
