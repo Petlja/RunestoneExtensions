@@ -134,7 +134,7 @@ BlocklPyModal.prototype.pythonToBlocks = function(code, workspace) {
 
 BlocklPyModal.toolboxXml = `
 <xml style="display: none">
-<category name="Карел" colour="275">
+<category name="Karel" colour="275">
     <block type="procedures_callnoreturn" inline="true">
         <mutation name="napred"/>
     </block>
@@ -166,8 +166,8 @@ BlocklPyModal.toolboxXml = `
     <mutation name="ima_loptica_kod_sebe"/>
 </block>
 </category>
-<category name="Променљиве" custom="VARIABLE" colour="240"></category>
-<category name="Гранања" colour="330">
+<category name="Promenljive" custom="VARIABLE" colour="240"></category>
+<category name="Grananja" colour="330">
   <block type="controls_if_better"></block>
   <block type="controls_if_better">
     <mutation else="1"></mutation>
@@ -176,28 +176,28 @@ BlocklPyModal.toolboxXml = `
   <block type="logic_operation"></block>
   <block type="logic_negate"></block>
 </category>
-<category name="Петље" colour="300">
+<category name="Petlje" colour="300">
   <block type="controls_forEach"></block>
 </category>
 <sep></sep>
-<category name="Рачунања" colour="270">
+<category name="Računanja" colour="270">
   <block type="math_arithmetic"></block>
   <block type="math_round"></block>
 </category>
-<category name="Излаз" colour="160">
+<category name="Izlaz" colour="160">
   <block type="text_print"></block>
 </category>
-<category name="Улаз" colour="165">
+<category name="Ulaz" colour="165">
   <block type="text_input_noprompt"></block>
   <block type="text_input"></block>
 </category>
 <sep></sep>
-<category name="Вредности" colour="100">
+<category name="Vrednosti" colour="100">
   <block type="text"></block>
   <block type="math_number"></block>
   <block type="logic_boolean"></block>
 </category>
-<category name="Конверзије" colour="275">
+<category name="Konverzije" colour="275">
   <block type="procedures_callreturn" inline="true">
     <mutation name="int">
       <arg name=""></arg>
@@ -219,7 +219,7 @@ BlocklPyModal.toolboxXml = `
     </mutation>
   </block>
 </category>
-<category name="Листе" colour="30">
+<category name="Liste" colour="30">
   <block type="lists_create_with">
     <value name="ADD0">
       <block type="math_number">
