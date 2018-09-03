@@ -42,10 +42,12 @@ BlocklPyModal.prototype.open = function(title, width, height, pythonSrc, blockly
     });
 
     var btnSave = document.createElement("span");
-    $(btnSave).addClass("btn btn-primary btn-sm float-right");
+    $(btnSave).addClass("btn btn-primary");
+    $(btnSave).text("Vrati u Python  ");
     var icBtnSave = document.createElement("i");
-    $(icBtnSave).addClass("fas fa-save");
+    $(icBtnSave).addClass("fas fa-undo");
     btnSave.appendChild(icBtnSave);
+
     $(btnSave).on('click', function(e) {
         var code = Blockly.Python.workspaceToCode(blocklyWorkspace);
         hideAndClearDom();
@@ -68,7 +70,7 @@ BlocklPyModal.prototype.open = function(title, width, height, pythonSrc, blockly
     var divBody = document.createElement("div");
     $(divBody).addClass("modal-body");
     var divFooter = document.createElement("div");
-    $(divFooter).addClass("modal-footer");
+    $(divFooter).addClass("modal-footer d-flex justify-content-end");
     var header = document.createElement("span");
     $(header).addClass("modal-title");
     $(header).html(title);
