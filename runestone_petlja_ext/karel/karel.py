@@ -42,7 +42,7 @@ TEMPLATE_END = """
     <div data-component="karel" id="%(divid)s" class="karel_section">
         <div class="karel_actions col-md-12"><button class="btn btn-success run-button">Покрени програм</button>
         <button class="btn btn-default reset-button">Врати на почетак</button>
-        <button class="btn btn-default blockly-button">Blockly</button></div>
+        <button class="btn btn-default blockly-button" style="display: %(blockly)s;">Blockly</button></div>
         <div style="overflow: hidden;" class="karel_actions col-md-12" >
             <section class="col-md-12">
                 <article>
@@ -95,11 +95,14 @@ def purge_karel_nodes(app, env, docname):
 class KarelDirective(Directive):
     """
 .. karel::
+    :blockly: -- use blocky
     """
     required_arguments = 1
     optional_arguments = 0
     has_content = True
-
+    option_spec = {
+        'blockly': directives.flag
+    }
     def run(self):
         """
         generate html to include Karel box.
@@ -118,6 +121,11 @@ class KarelDirective(Directive):
 
         if not self.options['divid']:
             raise Exception("No divid for ..karel karel.py")
+
+        if 'blockly' in self.options:
+            self.options['blockly'] = "inline-block"
+        else:
+            self.options['blockly'] = "none"
 
         explain_text = None
         if self.content:
