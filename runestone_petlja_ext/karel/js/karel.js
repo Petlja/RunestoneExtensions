@@ -16,32 +16,32 @@ var $builtinmodule = function(name)
     drawer.drawFrame(robot);
 
     function turnLeft() {
-		robot.turnLeft();
-		drawer.addFrame(robot.clone());
+	robot.turnLeft();
+	drawer.addFrame(robot.clone());
     }
 
-	function turnRight() {
-		robot.turnRight();
-		drawer.addFrame(robot.clone());
+    function turnRight() {
+	robot.turnRight();
+	drawer.addFrame(robot.clone());
     }
 
     function move() {
-		robot.move();
-		drawer.addFrame(robot.clone());
+	robot.move();
+	drawer.addFrame(robot.clone());
     }
 
-	function frontIsClear() {
-		return robot.frontIsClear();
+    function frontIsClear() {
+	return robot.frontIsClear();
     }
 
-	function ballsPresent() {
-		return robot.ballsPresent();
-	}
+    function ballsPresent() {
+	return robot.ballsPresent();
+    }
 
     function getBalls() {
 	return robot.getBalls();
     }
-
+    
     function hasBalls() {
 	return robot.getBalls() != 0;
     }
@@ -52,15 +52,15 @@ var $builtinmodule = function(name)
     }
     
 
-	function pickBall() {
-		robot.pickBall();
-		drawer.addFrame(robot.clone());
+    function pickBall() {
+	robot.pickBall();
+	drawer.addFrame(robot.clone());
     }
-
-	function putBall() {
-		robot.putBall();
-		drawer.addFrame(robot.clone());
-	}
+    
+    function putBall() {
+	robot.putBall();
+	drawer.addFrame(robot.clone());
+    }
 
     function showMessage(m) {
 	robot.turnMessagesOn();
