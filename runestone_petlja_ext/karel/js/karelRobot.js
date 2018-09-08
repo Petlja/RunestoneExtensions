@@ -13,7 +13,7 @@ var Robot = (function () {
         r.location.x = this.location.x;
         r.location.y = this.location.y;
         r.direction = this.direction;
-        r.numBalls = 0;
+        r.numBalls = this.numBalls;
         r.infiniteBalls = this.infiniteBalls;
         r.lastMessage = this.lastMessage;
 	r.messagesOn = this.messagesOn;
@@ -49,9 +49,13 @@ var Robot = (function () {
     };
 
     Robot.prototype.setInfiniteBalls = function (b) {
-        this.inifiniteBalls = b;
+        this.infiniteBalls = b;
     };
 
+    Robot.prototype.getInfiniteBalls = function () {
+        return this.infiniteBalls;
+    };
+    
     Robot.prototype.getAvenue = function () {
         return this.location.x;
     };
@@ -164,7 +168,7 @@ var Robot = (function () {
     };
 
     Robot.prototype.putBall = function () {
-        if((this.getBalls()===0) && (!this.inifiniteBalls)){
+        if((this.getBalls()===0) && (!this.infiniteBalls)){
             throw "No balls with Karel";
         }
 
