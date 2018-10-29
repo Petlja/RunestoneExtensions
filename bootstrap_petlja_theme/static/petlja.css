@@ -112,3 +112,18 @@ div.modal-header {
 .modal-dialog {
   max-width: none;
 }
+
+@media only screen and (max-width: 500px) {
+    .course-content {
+        padding: 5px;
+        text-align: left;
+    }
+
+    .section{
+        padding: 0 4px 0 0;
+    }
+    .sections {
+        padding: 0 4px 0 0;
+    }
+
+}
