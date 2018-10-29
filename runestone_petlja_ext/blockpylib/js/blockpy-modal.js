@@ -23,7 +23,8 @@ BlocklPyModal.prototype.open = function(title, width, height, pythonSrc, blockly
     var divModal = document.createElement("div");
     document.body.appendChild(divModal);
     $(divModal).addClass("modal");
-    $(divModal).css("text-align", "center");
+    //$(divModal).css("text-align", "center");
+    $(divModal).css("padding-left", "15px");
 
     var hideAndClearDom = function() {
         $('.modal').modal('hide');
