@@ -183,9 +183,373 @@ var PygameLib = {};
         return mod;
     }
 
-    
+    //pygame.time
+    PygameLib.time_module = function(name) {
+        mod = {};
+        mod.wait = new Sk.builtin.func(function(amount) {
+            var t_m = Sk.importModule("time", false, true);
+            var sec = Sk.ffi.remapToJs(amount) / 1000;
+            return Sk.misceval.callsimOrSuspend(t_m.$d['sleep'], Sk.ffi.remapToPy(sec));
+        });
 
-    
+        mod.get_ticks = new Sk.builtin.func(function() {
+            return Sk.ffi.remapToPy(new Date() - PygameLib.initial_time);
+        });
+        mod.delay = new Sk.builtin.func(function(amount) {
+            var t_m = Sk.importModule("time", false, false);
+            var sec = Sk.ffi.remapToJs(amount) / 1000;
+            return Sk.misceval.callsimOrSuspend(t_m.$d['sleep'], Sk.ffi.remapToPy(sec));
+        });
+        mod.set_timer = new Sk.builtin.func(function(eventid, milliseconds) {
+            var event = Sk.ffi.remapToJs(eventid);
+            var ms = Sk.ffi.remapToJs(milliseconds);
+            if (PygameLib.eventTimer[event]) {
+                clearInterval(PygameLib.eventTimer[event].timer);
+            }
+            else {
+                PygameLib.eventTimer[event] = {};
+                PygameLib.eventTimer[event].f = function () {
+                    var e = [event, { }];
+                    PygameLib.eventQueue.unshift(e);
+                }
+            }
+            if (ms) {
+                PygameLib.eventTimer[event].timer = setInterval(PygameLib.eventTimer[event].f, ms);
+            }
+            return mod;
+        });
+
+        mod.Clock = Sk.misceval.buildClass(mod, time_Clock, 'Clock', []);
+        PygameLib.ClockType = mod.Clock;
+        return mod;
+    };
+
+    function time_Clock($gbl, $loc) {
+        $loc.__init__ = new Sk.builtin.func(function (self) {
+            Sk.abstr.sattr(self, 'prevTime', Sk.builtin.none.none$, false);
+            Sk.abstr.sattr(self, 'getTime', Sk.builtin.none.none$, false);
+            Sk.abstr.sattr(self, 'rawTime', Sk.ffi.remapToPy(0), false);
+            Sk.abstr.sattr(self, 'fpsArray', Sk.ffi.remapToPy([]), false);
+            Sk.abstr.sattr(self, 'fpsIdx', Sk.ffi.remapToPy(0));
+            return Sk.builtin.none.none$;
+        }, $gbl);
+        $loc.__init__.co_name = new Sk.builtins['str']('__init__');
+
+        $loc.tick = new Sk.builtin.func(function (self, framerate) {
+            var currTime = Date.now();
+            var mills = 0;
+            if (Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'prevTime', false)) !== null) {
+                var prevTime = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'prevTime', false));
+                mills = (currTime - prevTime);
+            }
+            Sk.abstr.sattr(self, 'prevTime', Sk.ffi.remapToPy(currTime), false);
+            Sk.abstr.sattr(self, 'getTime', Sk.ffi.remapToPy(mills), false);
+            var arr = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'fpsArray', false));
+            var idx = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'fpsIdx', false));
+            if (arr.length < 10) {
+                arr.push(mills);
+            } else {
+                arr[idx] = mills;
+            }
+            idx = (idx + 1) % 10;
+            Sk.abstr.sattr(self, 'fpsArray', Sk.ffi.remapToPy(arr), false);
+            Sk.abstr.sattr(self, 'fpsIdx', Sk.ffi.remapToPy(idx), false);
+            if (framerate !== undefined) {
+                var timeout = 1000 / Sk.ffi.remapToJs(framerate);
+                return new Sk.misceval.promiseToSuspension(
+                    new Promise(function(resolve) {
+                    var f = function() {
+                        Sk.abstr.sattr(self, 'rawTime', Sk.ffi.remapToPy(Date.now() - currTime), false);
+                        while (currTime + timeout >= Date.now()) {}
+                        resolve(mills);
+                    };
+                    Sk.setTimeout(f, 1);
+                }));
+            }
+            Sk.abstr.sattr(self, 'rawTime', Sk.ffi.remapToPy(Date.now() - currTime), false);
+            return Sk.ffi.remapToPy(mills);
+        }, $gbl);
+        $loc.tick.co_name = new Sk.builtins['str']('tick');
+        $loc.tick.co_varnames = ['framerate'];
+        $loc.tick.$defaults = [Sk.ffi.remapToPy(0)];
+
+        $loc.tick_busy_loop = new Sk.builtin.func(function (self, framerate) {
+            // TODO: Should this method have a different implementation?
+            var currTime = Date.now();
+            var mills = 0;
+            if (Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'prevTime', false)) !== null) {
+                var prevTime = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'prevTime', false));
+                mills = (currTime - prevTime);
+            }
+            Sk.abstr.sattr(self, 'prevTime', Sk.ffi.remapToPy(currTime), false);
+            Sk.abstr.sattr(self, 'getTime', Sk.ffi.remapToPy(mills), false);
+
+            if (framerate !== undefined) {
+                var timeout = 1000 / Sk.ffi.remapToJs(framerate);
+                return new Sk.misceval.promiseToSuspension(
+                    new Promise(function(resolve) {
+                    var f = function() {
+                        Sk.abstr.sattr(self, 'rawTime', Sk.ffi.remapToPy(Date.now() - currTime), false);
+                        while (currTime + timeout >= Date.now()) {}
+                        resolve(mills);
+                    };
+                    Sk.setTimeout(f, 1);
+                }));
+            }
+            Sk.abstr.sattr(self, 'rawTime', Sk.ffi.remapToPy(Date.now() - currTime), false);
+            return Sk.ffi.remapToPy(mills);
+        }, $gbl);
+        $loc.tick_busy_loop.co_name = new Sk.builtins['str']('tick_busy_loop');
+        $loc.tick_busy_loop.co_varnames = ['framerate'];
+        $loc.tick_busy_loop.$defaults = [Sk.ffi.remapToPy(0)];
+
+        $loc.get_time = new Sk.builtin.func(function (self) {
+            return Sk.abstr.gattr(self, 'getTime', false);
+        });
+        $loc.get_time.co_name = new Sk.builtins['str']('get_time');
+
+        $loc.get_rawtime = new Sk.builtin.func(function (self) {
+            return Sk.abstr.gattr(self, 'rawTime', false);
+        });
+        $loc.get_rawtime.co_name = new Sk.builtins['str']('get_rawtime');
+
+        $loc.get_fps = new Sk.builtin.func(function(self) {
+            var arr = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'fpsArray', false));
+            if (arr.length < 10 || arr[0] === 0) {
+                return Sk.ffi.remapToPy(0);
+            }
+            var sum = 0;
+            for (var i = 0; i < 10; i++) {
+                sum += arr[i];
+            }
+            return Sk.ffi.remapToPy(sum / 10);
+        });
+    }
+    time_Clock.co_name = new Sk.builtins['str']('Clock');
+
+    // pygame.font
+    PygameLib.font_module = function(name) {
+        mod = {};
+        mod.__is_initialized = false;
+        mod.SysFont = Sk.misceval.buildClass(mod, font_SysFont, "SysFontType",[]);
+        PygameLib.SysFontType = mod.SysFontType;
+        // TODO: Font class
+        mod.init = new Sk.builtin.func(function () {
+            mod.__is_initialized = true;
+        });
+        mod.quit = new Sk.builtin.func(function () {
+            mod.__is_initialized = false;
+        });
+        mod.get_init = new Sk.builtin.func(function () {
+            if (mod.__is_initialized) {
+                return Sk.ffi.remapToPy(true);
+            }
+            return Sk.ffi.remapToPy(false);
+        });
+        mod.get_default_font = new Sk.builtin.func(function () {
+           return Sk.ffi.remapToPy('arial');
+        });
+        mod.get_fonts = new Sk.builtin.func(function () {
+            return Sk.ffi.remapToPy(['arial', 'helvetica', 'times', 'courier']);
+            // TODO: maybe we should extend this list
+        });
+        mod.match_font = new Sk.builtin.func(function() {
+            return Sk.builtin.none.none$;
+            // TODO: how do we browse the filesystem from JS?
+        });
+        return mod;
+    };
+
+    function font_SysFont($gbl, $loc) {
+        $loc.__init__ = new Sk.builtin.func(function (self, name, size, bold, italic) {
+            Sk.abstr.sattr(self, 'name', name, false);
+            Sk.abstr.sattr(self, 'sz', size, false);
+            if (bold === undefined) {
+                Sk.abstr.sattr(self, 'bold', Sk.ffi.remapToPy(false), false);
+            } else {
+                Sk.abstr.sattr(self, 'bold', bold, false);
+            }
+            if (italic === undefined) {
+                Sk.abstr.sattr(self, 'italic', Sk.ffi.remapToPy(false), false);
+            } else {
+                Sk.abstr.sattr(self, 'italic', italic, false);
+            }
+            Sk.abstr.sattr(self, 'underline', Sk.ffi.remapToPy(false), false);
+            return Sk.builtin.none.none$;
+        }, $gbl);
+        $loc.__init__.co_name = new Sk.builtins['str']('__init__');
+        $loc.__init__.co_varnames = ['bold', 'italic'];
+        $loc.__init__.$defaults = [false, false];
+
+        $loc.__repr__ = new Sk.builtin.func(function (self) {
+            var name = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'name', false));
+            var size = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'sz', false));
+            return Sk.ffi.remapToPy('<SysFont(' + name + ' ' + size + ')>');
+        });
+        $loc.__repr__.co_name = new Sk.builtins['str']('__repr__');
+        $loc.__repr__.co_varnames = ['self'];
+
+        $loc.render = new Sk.builtin.func(renderFont, $gbl);
+        $loc.render.co_name = new Sk.builtins['str']('render');
+        $loc.render.co_varnames = ['self', 'text', 'antialias', 'color', 'background'];
+        $loc.render.$defaults = [Sk.builtin.none.none$];
+
+        $loc.size = new Sk.builtin.func(fontSize, $gbl);
+        $loc.size.co_name = new Sk.builtins['str']('size');
+
+        $loc.set_underline = new Sk.builtin.func(function (self, bool) {
+            Sk.abstr.sattr(self, 'underline', bool, false);
+        }, $gbl);
+        $loc.get_underline = new Sk.builtin.func(function (self) {
+            return Sk.abstr.gattr(self, 'underline', false);
+        }, $gbl);
+
+        $loc.set_italic = new Sk.builtin.func(function (self, bool) {
+            Sk.abstr.sattr(self, 'italic', bool, false);
+        }, $gbl);
+        $loc.get_italic = new Sk.builtin.func(function (self) {
+            return Sk.abstr.gattr(self, 'italic', false);
+        }, $gbl);
+
+        $loc.set_bold = new Sk.builtin.func(function (self, bool) {
+            Sk.abstr.sattr(self, 'bold', bool, false);
+        }, $gbl);
+        $loc.get_bold = new Sk.builtin.func(function (self) {
+            return Sk.abstr.gattr(self, 'bold', false);
+        }, $gbl);
+    }
+    font_SysFont.co_name = new Sk.builtins['str']('SysFont');
+
+    function fontSize(self, text) {
+        var msg = Sk.ffi.remapToJs(text);
+        var h = 1.01 * Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'sz', false));
+        var fontName = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'name', false));
+        fontName = "" + h + "px " + fontName;
+        var bold = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'bold', false));
+        if (bold) {
+            fontName = 'bold ' + fontName;
+        }
+        var italic = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'italic', false));
+        if (italic) {
+            fontName = 'italic ' + fontName;
+        }
+        var w = 300;
+
+        // Create a dummy canvas in order to exploit its measureText() method
+        var t = Sk.builtin.tuple([w, h]);
+        var s = Sk.misceval.callsim(PygameLib.SurfaceType, t, false);
+        var ctx = s.main_canvas.getContext("2d");
+        ctx.font = fontName;
+        return new Sk.builtin.tuple([ctx.measureText(msg).width, h]);
+    }
+
+    function renderFont(self, text, antialias, color, background) {
+        // TODO: antialias is ignored
+        var msg = Sk.ffi.remapToJs(text);
+        var STRETCH_CONST = 1.1;
+        var h = STRETCH_CONST * Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'sz', false));
+        var fontName = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'name', false));
+        fontName = "" + h + "px " + fontName;
+        var bold = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'bold', false));
+        if (bold) {
+            fontName = 'bold ' + fontName;
+        }
+        var italic = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'italic', false));
+        if (italic) {
+            fontName = 'italic ' + fontName;
+        }
+        var underline = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'underline', false));
+
+        var w = 300;
+
+        // Create a dummy canvas in order to exploit its measureText() method
+        var t = Sk.builtin.tuple([w, h]);
+        var s = Sk.misceval.callsim(PygameLib.SurfaceType, t, false);
+        var ctx = s.main_canvas.getContext("2d");
+        ctx.font = fontName;
+        w = ctx.measureText(msg).width;
+
+        t = Sk.builtin.tuple([w, h]);
+        s = Sk.misceval.callsim(PygameLib.SurfaceType, t, false);
+        ctx = s.main_canvas.getContext("2d");
+        if (background !== undefined) {
+            var background_js = extract_color(background);
+            ctx.fillStyle = 'rgba(' + background_js[0] + ', ' + background_js[1] + ', ' + background_js[2] + ', '
+                + background_js[3] + ')';
+            ctx.fillRect(0, 0, s.main_canvas.width, s.main_canvas.height);
+        }
+        ctx.font = fontName;
+        var color_js = extract_color(color);
+        ctx.fillStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
+        ctx.fillText(msg, 0, 1 / STRETCH_CONST * h);
+        if (underline) {
+            ctx.strokeStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
+            ctx.lineWidth = 1;
+            ctx.moveTo(0, h-1);
+            ctx.lineTo(w, h-1);
+            ctx.stroke();
+        }
+        return s;
+    }
+
+    PygameLib.key_module = function(name) {
+        mod = {};
+
+        mod.set_repeat = new Sk.builtin.func(function (delay, interval) {
+            // TODO: consider a more realistic implementation where the interval is taken into account
+            if (delay !== undefined) {
+                PygameLib.repeatKeys = true;
+            } else {
+                PygameLib.repeatKeys = false;
+            }
+        });
+        mod.get_repeat = new Sk.builtin.func(function() {
+            if (PygameLib.repeatKeys) {
+                return Sk.builtin.tuple([1, 1]);
+            } else {
+                return Sk.builtin.tuple([0, 0]);
+            }
+        });
+        mod.get_focused = new Sk.builtin.func(function () {
+            return Sk.ffi.remapToPy(document.hasFocus());
+        });
+        mod.get_pressed = new Sk.builtin.func(function () {
+            var pressed = new Array(323).fill(false);
+            for (var i = 0; i < PygameLib.eventQueue.length; i++) {
+                pressed[PygameLib.eventQueue[i][1].key] = true;
+            }
+            return Sk.ffi.remapToPy(pressed);
+        });
+        mod.get_mods = new Sk.builtin.func(function () {
+            var mask = 0;
+            for (var i = 0; i < PygameLib.eventQueue.length; i++) {
+                for (var j = 0; j < keyboardModifierKeys.length; j++) {
+                    if (PygameLib.eventQueue[i][1].key === keyboardModifierKeys[j]) {
+                        mask &= 1 << j;
+                    }
+                }
+            }
+            return Sk.ffi.remapToPy(mask);
+        });
+        mod.set_mods = new Sk.builtin.func(function(m) {
+            var mask = Sk.ffi.remapToJs(m);
+            for (var i = 0; i < keyboardModifierKeys.length; i++) {
+                if (mask & (1 << i)) {
+                    PygameLib.eventQueue.unshift([PygameLib.constants.KEYDOWN, { key: keyboardModifierKeys[i]}]);
+                }
+            }
+
+        });
+        mod.name = new Sk.builtin.func(function (idx) {
+            var i = Sk.ffi.remapToJs(idx);
+            if (i < 0 || i >= 323) {
+                return Sk.ffi.remapToPy("unknown key");
+            }
+            return Sk.ffi.remapToPy(keyToName[i]);
+        });
+        return mod;
+    };
+
     function resetTarget() {
         var selector = Sk.TurtleGraphics.target;
         var target = typeof selector === "string" ?
@@ -443,15 +807,13 @@ var PygameLib = {};
             else {
                 currentTarget.appendChild(self.main_canvas);
             }
+            self.main_context = self.main_canvas.getContext("2d");
+            self.offscreen_canvas = document.createElement('canvas');
+            self.context2d = self.offscreen_canvas.getContext("2d");
+
+            self.offscreen_canvas.width = tuple_js[0];
+            self.offscreen_canvas.height = tuple_js[1];
         }
-
-        self.main_context = self.main_canvas.getContext("2d");
-        self.offscreen_canvas = document.createElement('canvas');
-        self.context2d = self.offscreen_canvas.getContext("2d");
-
-        self.offscreen_canvas.width = tuple_js[0];
-        self.offscreen_canvas.height = tuple_js[1];
-
         self.main_canvas.setAttribute('width', self.width);
         self.main_canvas.setAttribute('height', self.height);
         return Sk.builtin.none.none$;
@@ -539,16 +901,116 @@ var PygameLib = {};
     surface$1.co_name = new Sk.builtins['str']('Surface');
 
     // pygame.display module
+    PygameLib.display_module = function (name) {
+        var mod = {};
+        mod.set_mode = new Sk.builtin.func(function (size) {
+            mod.surface = Sk.misceval.callsim(PygameLib.SurfaceType, size);
+            PygameLib.surface = mod.surface;
+            return mod.surface;
+        });
+        mod.update = new Sk.builtin.func(function() {
+            Sk.misceval.callsim(mod.surface.update, mod.surface);
+        });
+        mod.flip = new Sk.builtin.func(function() {
+            Sk.misceval.callsim(mod.surface.update, mod.surface);
+        });
+        mod.set_caption = new Sk.builtin.func(function(caption) {
+            if ($('.modal-title')) $('.modal-title').html(Sk.ffi.remapToJs(caption));
+            PygameLib.caption = Sk.ffi.remapToJs(caption);
+        });
+        return mod;
+    };
+
     //pygame.event module
     //pygame.event.get()
     //get() -> Eventlist
     //get(type) -> Eventlist
     //get(typelist) -> Eventlist
-    
+    var get_event = function(types) {
+        Sk.builtin.pyCheckArgs('get_event', arguments, 0, 1, false, false);
+        var list = [];
+        var t,d;
+        var types_js = types ? Sk.ffi.remapToJs(types) : [];
+        var queue = types ? (Sk.abstr.typeName(types) == "list" ? PygameLib.eventQueue.filter(e => types_js.includes(e[0])) : PygameLib.eventQueue.filter(e => e[0] == types_js))
+                        : PygameLib.eventQueue;
 
-    
+        for (var i = 0; i < queue.length; i++) {
+            var event = queue[i];
+            var type = Sk.ffi.remapToPy(event[0]);
+            var dictjs = event[1];
+            kvs = [];
+            for (k in dictjs) {
+                kvs.push(Sk.ffi.remapToPy(k));
+                kvs.push(Sk.ffi.remapToPy(dictjs[k]));
+            }
+            var dict = new Sk.builtin.dict(kvs);
+            var e = Sk.misceval.callsim(PygameLib.EventType, type, dict);
+            list.push(e);
+        }
+        queue.splice(0);
 
+        return new Sk.builtin.list(list);
+    }
 
+    function event_EventType_f($gbl, $loc) {
+        $loc.__init__ = new Sk.builtin.func(function(self,type,dict) {
+            Sk.builtin.pyCheckArgs('__init__', arguments, 2, 3, false, false);
+            dict = dict || new Sk.builtin.dict();
+            Sk.abstr.sattr(self, 'dict', dict, false);
+            Sk.abstr.sattr(self, 'type', type, false);
+            dictjs = Sk.ffi.remapToJs(dict);
+            for (k in dictjs) {
+                Sk.abstr.sattr(self, k, Sk.ffi.remapToPy(dictjs[k]), false);
+            }
+            return Sk.builtin.none.none$;
+        });
+        $loc.__init__.co_name = new Sk.builtins['str']('__init__');
+        $loc.__init__.co_varnames = ['self', 'type', 'dict'];
+
+        $loc.__repr__ = new Sk.builtin.func(function(self) {
+            var dict = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'dict', false));
+            var type = Sk.ffi.remapToJs(Sk.abstr.gattr(self, 'type', false));
+            return Sk.ffi.remapToPy('<Event(' + type + ' ' + dict + ')>');
+        });
+        $loc.__repr__.co_name = new Sk.builtins['str']('__repr__');
+        $loc.__repr__.co_varnames = ['self'];
+
+    }
+
+    PygameLib.event_module = function (name) {
+        var mod = {};
+        mod.get = new Sk.builtin.func(get_event);
+        mod.EventType = Sk.misceval.buildClass(mod, event_EventType_f, "EventType",[]);
+        PygameLib.EventType = mod.EventType;
+        mod.Event = new Sk.builtin.func(function(type,dict) {
+            return Sk.misceval.callsim(mod.EventType, type, dict)
+        });
+
+        mod.wait = new Sk.builtin.func(function() {
+            return new Sk.misceval.promiseToSuspension(new Promise(function(resolve) {
+                var f = function() {
+                    if (PygameLib.eventQueue.length) {
+                        var event = PygameLib.eventQueue.splice(0, 1)[0];
+                        var type = Sk.ffi.remapToPy(event[0]);
+                        var dictjs = event[1];
+                        kvs = [];
+                        for (k in dictjs) {
+                            kvs.push(Sk.ffi.remapToPy(k));
+                            kvs.push(Sk.ffi.remapToPy(dictjs[k]));
+                        }
+                        var dict = new Sk.builtin.dict(kvs);
+                        var e = Sk.misceval.callsim(PygameLib.EventType, type, dict);
+                        resolve(e);
+                    }
+                    else
+                        Sk.setTimeout(f, 10);
+                };
+
+                Sk.setTimeout(f, 10);
+            }));
+        });
+        return mod;
+    };
 
     //pygame.Color
     function color_type_f($gbl, $loc) {
@@ -1426,10 +1888,78 @@ var PygameLib = {};
         });
 
     }
-    
+    // pygame.mouse
+    PygameLib.mouse_module = function (name) {
+        mod = {};
+        mod.get_pressed = new Sk.builtin.func(function () {
+            return Sk.ffi.remapToPy(PygameLib.mouseData["button"]);
+        });
+        mod.get_pos = new Sk.builtin.func(function () {
+            return Sk.ffi.remapToPy(PygameLib.mouseData["pos"]);
+        });
+        mod.get_rel = new Sk.builtin.func(function () {
+            return Sk.ffi.remapToPy(PygameLib.mouseData["rel"]);
+        });
+        mod.set_pos = new Sk.builtin.func(function (x, y) {
+            if (Sk.abstr.typeName(x) === "tuple" && y === undefined) {
+                var xy = Sk.ffi.remapToJs(x);
+                x = xy[0];
+                y = xy[1];
+            } else if (Sk.abstr.typeName(x) === "int" && Sk.abstr.typeName(y) === "int") {
+                x = Sk.ffi.remapToJs(x);
+                y = Sk.ffi.remapToJs(y);
+            } else {
+                throw new Sk.builtin.TypeError("invalid position argument for set_pos");
+            }
+            PygameLib.mouseData["pos"] = [x, y];
+        });
+        mod.set_visible = new Sk.builtin.func(function (b) {
+            if (Sk.ffi.remapToJs(b)) {
+                document.body.style.cursor = '';
+            } else {
+                document.body.style.cursor = 'none';
+            }
+        });
+        mod.get_focused = new Sk.builtin.func(function () {
+            return Sk.ffi.remapToPy(document.hasFocus());
+        });
+        mod.set_cursor = new Sk.builtin.func(function () {
+            throw new Sk.builtin.NotImplementedError("Not yet implemented");
+        });
+        mod.get_cursor = new Sk.builtin.func(function () {
+            throw new Sk.builtin.NotImplementedError("Not yet implemented");
+        });
+        return mod;
+    };
 
     // pygame.version
-    
+    PygameLib.version_module = function(name) {
+        mod = {};
+        mod.ver = new Sk.builtin.func(function () {
+            return Sk.ffi.remapToPy("1.9.3");
+        });
+        mod.vernum = new Sk.builtin.func(function () {
+            return Sk.builtin.tuple([1, 9, 3]);
+        });
+        mod.rev = new Sk.builtin.func(function () {
+            return Sk.builtin.none.none$;
+        });
+        return mod;
+    };
+    //pygame.draw
+    PygameLib.draw_module = function(name) {
+        mod = {};
+        mod.rect = new Sk.builtin.func(draw_rect);
+        mod.polygon = new Sk.builtin.func(draw_polygon);
+        mod.circle = new Sk.builtin.func(draw_circle);
+        mod.ellipse = new Sk.builtin.func(draw_ellipse);
+        mod.arc = new Sk.builtin.func(draw_arc);
+        mod.line = new Sk.builtin.func(draw_line);
+        mod.lines = new Sk.builtin.func(draw_lines);
+        mod.aaline = new Sk.builtin.func(draw_aaline);
+        mod.aalines = new Sk.builtin.func(draw_aalines);
+        return mod;
+    }
 
     //converts color argument to js type
     var extract_color = function(color) {
@@ -1447,7 +1977,6 @@ var PygameLib = {};
         return color_js;
     }
 
-PygameLib.extract_color = extract_color;
     var extract_rect = function(rect) {
         var rect_js = [0, 0, 0, 0];
         if (Sk.abstr.typeName(rect) == "Rect") {
@@ -1462,17 +1991,224 @@ PygameLib.extract_color = extract_color;
         return rect_js;
     }
 
-    PygameLib.extract_rect = extract_rect;
+    //returns Rect object used as bounding box for drawing functions
+    var bbox = function(min_h, max_h, min_w, max_w) {
+        var width = max_w - min_w;
+        var height = max_h - min_h;
+        var top = min_h;
+        var left = min_w;
+        t = Sk.builtin.tuple([left, top]);
+        return Sk.misceval.callsim(PygameLib.RectType, Sk.builtin.tuple([left, top]), Sk.builtin.tuple([width, height]));
+    }
 
-    
+    //pygame.draw.rect()
+    //rect(Surface, color, Rect, width=0) -> Rect
+    var draw_rect = function(surface, color, rect, width = 0) {
+        var ctx = surface.context2d;
+        var color_js = extract_color(color);
+        var width_js = Sk.ffi.remapToJs(width);
+        var rect_js = extract_rect(rect);
 
-   
-    
-    
+        var left = rect_js[0];
+        var top = rect_js[1];
+        var width = rect_js[2];
+        var height = rect_js[3];
 
-   
+        if (width_js) {
+            ctx.lineWidth = width_js;
+            ctx.strokeStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
+            ctx.strokeRect(left, top, width, height);
+        } else {
+            ctx.fillStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
+            ctx.fillRect(left, top, width, height);
+        }
 
-    
+        return Sk.misceval.callsim(PygameLib.RectType, Sk.builtin.tuple([left, top]), Sk.builtin.tuple([width, height]));
+    }
+
+    //pygame.draw.polygon()
+    //polygon(Surface, color, pointlist, width=0) -> Rect
+    var draw_polygon = function(surface, color, pointlist, width = 0) {
+        return draw_lines(surface, color, true, pointlist, width);
+    }
+
+    //pygame.draw.circle()
+    //circle(Surface, color, pos, radius, width=0) -> Rect
+    var draw_circle = function(surface, color, pos, radius, width = 0) {
+        var ctx = surface.context2d;
+        var width_js = Sk.ffi.remapToJs(width);
+        var center = Sk.ffi.remapToJs(pos);
+        var rad = Sk.ffi.remapToJs(radius);
+        var color_js = extract_color(color);
+        ctx.beginPath();
+        ctx.arc(center[0], center[1], rad, 0, 2 * Math.PI);
+        if (width_js) {
+            ctx.lineWidth = width_js;
+            ctx.strokeStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
+            ctx.stroke();
+        } else {
+            ctx.fillStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
+            ctx.fill();
+        }
+
+        return bbox(center[1] - rad, center[1] + rad, center[0] - rad, center[0] + rad);
+    }
+
+    //pygame.draw.arc()
+    //arc(Surface, color, Rect, start_angle, stop_angle, width=1) -> Rect
+    var draw_arc = function(surface, color, rect, start_angle, stop_angle, width = 0) {
+        return draw_oval(surface, color, rect, start_angle, stop_angle, width, false);
+    }
+
+    //pygame.draw.arg()
+    //ellipse(Surface, color, Rect, width=0) -> Rect
+    var draw_ellipse = function(surface, color, rect, width = 0) {
+        return draw_oval(surface, color, rect, 0, 2 * Math.PI, width, true);
+    }
+
+    //help function
+    var draw_oval = function(surface, color, rect, start_angle, stop_angle, width, ellipse = false) {
+        var ctx = surface.context2d;
+        var width_js = Sk.ffi.remapToJs(width);
+        var color_js = extract_color(color);
+        var rect_js = extract_rect(rect);
+        var angles = [0, 0]
+        angles[0] = Sk.ffi.remapToJs(start_angle)
+        angles[1] = Sk.ffi.remapToJs(stop_angle)
+        var center = [0, 0]
+        center[0] = rect_js[0] + rect_js[2] / 2;
+        center[1] = rect_js[1] + rect_js[3] / 2;
+
+        ctx.beginPath();
+
+        ctx.ellipse(center[0], center[1], rect_js[2] / 2, rect_js[3] / 2, 0, -angles[0], -angles[1], true);
+
+        if (width_js) {
+            ctx.lineWidth = width_js;
+            ctx.strokeStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
+            ctx.stroke();
+        } else if (ellipse) {
+            ctx.fillStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
+            ctx.fill();
+        }
+
+        return Sk.misceval.callsim(PygameLib.RectType, Sk.builtin.tuple([rect_js[0], rect_js[1]]), Sk.builtin.tuple([rect_js[2], rect_js[3]]));
+    }
+
+    //pygame.draw.line()
+    //line(Surface, color, start_pos, end_pos, width=1) -> Rect
+    var draw_line = function(surface, color, start_pos, end_pos, width = 1) {
+        var width_js = Sk.ffi.remapToJs(width);
+        var start_pos_js = Sk.ffi.remapToJs(start_pos);
+        var end_pos_js = Sk.ffi.remapToJs(end_pos);
+        var color_js = extract_color(color);
+        var ctx = surface.context2d;
+        var ax = start_pos_js[0];
+        var ay = start_pos_js[1];
+        var bx = end_pos_js[0];
+        var by = end_pos_js[1];
+        var points;
+        if (Math.abs(ax - bx) <= Math.abs(ay - by)) {
+            points = [Sk.builtin.tuple([ax - width_js / 2, ay]), Sk.builtin.tuple([ax + width_js / 2, ay]),
+                                     Sk.builtin.tuple([bx + width_js / 2, by]), Sk.builtin.tuple([bx - width_js / 2, by])];
+            points = Sk.builtin.list(points);
+        }
+        else {
+            points = [Sk.builtin.tuple([ax, ay - width_js / 2]), Sk.builtin.tuple([ax, ay + width_js / 2]),
+                                    Sk.builtin.tuple([bx, by + width_js / 2]), Sk.builtin.tuple([bx, by - width_js / 2])];
+            points = Sk.builtin.list(points);
+        }
+        draw_polygon(surface, color, points);
+        var left = Math.min(start_pos_js[0], end_pos_js[0]);
+        var right = Math.max(start_pos_js[0], end_pos_js[0]);
+        var top = Math.min(start_pos_js[1], end_pos_js[1]);
+        var bot = Math.max(start_pos_js[1], end_pos_js[1]);
+        return bbox(top, bot, left, right);
+    }
+
+    //pygame.draw.lines()
+    //lines(Surface, color, closed, pointlist, width=1) -> Rect
+    var draw_lines = function(surface, color, closed, pointlist, width = 1) {
+        var width_js = Sk.ffi.remapToJs(width);
+        var closed_js = Sk.ffi.remapToJs(closed);
+        var pointlist_js = Sk.ffi.remapToJs(pointlist);
+        var color_js = extract_color(color);
+        var ctx = surface.context2d;
+        if (!width_js) {
+            ctx.beginPath();
+            ctx.lineWidth = width_js;
+            var first_point = pointlist_js[0];
+            var max_h = first_point[1], max_w = first_point[0];
+            var min_h = first_point[1], min_w = first_point[0];
+            ctx.moveTo(first_point[0], first_point[1]);
+            for (var i = 0; i < pointlist_js.length; i++) {
+                ctx.lineTo(pointlist_js[i][0], pointlist_js[i][1]);
+                max_w = Math.max(max_w, pointlist_js[i][0]);
+                min_w = Math.min(min_w, pointlist_js[i][0]);
+                max_h = Math.max(max_h, pointlist_js[i][1]);
+                min_h = Math.min(min_h, pointlist_js[i][1]);
+            }
+            if (closed_js) {
+                ctx.closePath();
+            }
+        }
+        else {
+            for (var i = 0; i < pointlist_js.length - 1; i++) {
+                draw_line(surface, color, Sk.builtin.tuple([pointlist_js[i][0], pointlist_js[i][1]]), Sk.builtin.tuple([pointlist_js[i + 1][0], pointlist_js[i + 1][1]]), width);
+            }
+            return bbox(0, 0, 0, 0);
+        }
+
+        if (width_js) {
+            ctx.strokeStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
+            ctx.stroke();
+        } else {
+            ctx.fillStyle = 'rgba(' + color_js[0] + ', ' + color_js[1] + ', ' + color_js[2] + ', ' + color_js[3] + ')';
+            ctx.fill();
+        }
+        return bbox(min_h, max_h, min_w, max_w);
+    }
+
+    //pygame.draw.aaline()
+    //aaline(Surface, color, startpos, endpos, blend=1) -> Rect
+    var draw_aaline = function(surface, color, startpos, endpos, blend = 1) {
+        return draw_line(surface, color, startpos, endpos);
+    }
+
+    //pygame.draw.aalines()
+    //aalines(Surface, color, closed, pointlist, blend=1) -> Rect
+    var draw_aalines = function(surface, color, closed, pointlist, blend = 1) {
+        return draw_lines(surface, color, closed, pointlist);
+    }
+
+    //pygame.image module
+    PygameLib.image_module = function(name) {
+        mod = {};
+        mod.load = new Sk.builtin.func(load_image);
+        mod.get_extended = new Sk.builtin.func(function () {
+            return Sk.ffi.remapToPy(false);
+        });
+        mod.save = new Sk.builtin.func(function (surf, filename) {
+
+        });
+        return mod;
+    }
+
+    var load_image = function(filename) {
+        return new Sk.misceval.promiseToSuspension(new Promise(function(resolve) {
+                var img = new Image();
+                img.src = PygameLib.imgPath + Sk.ffi.remapToJs(filename);
+                img.onload = function () {
+                    var w = PygameLib.surface.width;
+                    var h = PygameLib.surface.height;
+                    var t = Sk.builtin.tuple([img.width, img.height]);
+                    var s = Sk.misceval.callsim(PygameLib.SurfaceType, t, false);
+                    var ctx = s.main_canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0);
+                    resolve(s);
+                }
+            }));
+    }
 
 }());
 
@@ -2397,4 +3133,41 @@ PygameLib.Colors = {
     'brown1' : [255, 64, 64, 255] ,
     };
 
+var keyToName = ['unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
+    'unknown key', 'unknown key', 'backspace', 'tab', 'unknown key', 'unknown key', 'clear', 'return', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', 'unknown key', 'pause', 'unknown key', 'unknown key', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', 'unknown key', 'escape', 'unknown key', 'unknown key', 'unknown key',
+    'unknown key', 'space', '!', '"', '#', '$', 'unknown key', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0',
+    '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'unknown key', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+    'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', 'delete', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
+    'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
+    'world 0', 'world 1', 'world 2', 'world 3', 'world 4', 'world 5', 'world 6', 'world 7', 'world 8', 'world 9',
+    'world 10', 'world 11', 'world 12', 'world 13', 'world 14', 'world 15', 'world 16', 'world 17', 'world 18',
+    'world 19', 'world 20', 'world 21', 'world 22', 'world 23', 'world 24', 'world 25', 'world 26', 'world 27',
+    'world 28', 'world 29', 'world 30', 'world 31', 'world 32', 'world 33', 'world 34', 'world 35', 'world 36',
+    'world 37', 'world 38', 'world 39', 'world 40', 'world 41', 'world 42', 'world 43', 'world 44', 'world 45',
+    'world 46', 'world 47', 'world 48', 'world 49', 'world 50', 'world 51', 'world 52', 'world 53', 'world 54',
+    'world 55', 'world 56', 'world 57', 'world 58', 'world 59', 'world 60', 'world 61', 'world 62', 'world 63',
+    'world 64', 'world 65', 'world 66', 'world 67', 'world 68', 'world 69', 'world 70', 'world 71', 'world 72',
+    'world 73', 'world 74', 'world 75', 'world 76', 'world 77', 'world 78', 'world 79', 'world 80', 'world 81',
+    'world 82', 'world 83', 'world 84', 'world 85', 'world 86', 'world 87', 'world 88', 'world 89', 'world 90',
+    'world 91', 'world 92', 'world 93', 'world 94', 'world 95', '[0]', '[1]', '[2]', '[3]', '[4]', '[5]', '[6]',
+    '[7]', '[8]', '[9]', '[.]', '[/]', '[*]', '[-]', '[+]', 'enter', 'equals', 'up', 'down', 'right', 'left', 'insert',
+    'home', 'end', 'page up', 'page down', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12',
+    'f13', 'f14', 'f15', 'unknown key', 'unknown key', 'unknown key', 'numlock', 'caps lock', 'scroll lock',
+    'right shift', 'left shift', 'right ctrl', 'left ctrl', 'right alt', 'left alt', 'right meta', 'left meta',
+    'left super', 'right super', 'alt gr', 'compose', 'help', 'print screen', 'sys req', 'break', 'menu', 'power',
+    'euro', 'undo', 'unknown key'];
 
+var keyboardModifierKeys = [PygameLib.constants.K_LSHIFT, PygameLib.constants.K_RSHIFT, 0, 0, 0, 0,
+    PygameLib.constants.K_LCTRL, PygameLib.constants.K_RCTRL, PygameLib.constants.K_LALT, PygameLib.constants.K_RALT,
+    PygameLib.constants.K_LMETA, PygameLib.constants.K_RMETA, 0, PygameLib.constants.K_CAPSLOCK,
+    PygameLib.constants.K_NUMLOCK, PygameLib.constants.K_MODE];
