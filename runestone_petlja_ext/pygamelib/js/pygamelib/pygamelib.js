@@ -400,18 +400,27 @@ var PygameLib = {};
                 var div2 = document.createElement("div");
                 $(div2).addClass("modal-dialog modal-lg");
                 $(div2).css("display", "inline-block");
-                $(div2).width(self.width + 42);
+                if (screen.width >= 900)
+                    $(div2).width(self.width + 42);
+                else {
+                    $(div2).attr("style", "display: inline-block; width: 98%; height: 98%; margin: 1px 1px 1px 1%;");
+                }
                 $(div2).attr("role", "document");
                 div1.appendChild(div2);
 
                 var div3 = document.createElement("div");
                 $(div3).addClass("modal-content");
+                if (screen.width < 900) 
+                    $(div3).height("100%");
                 div2.appendChild(div3);
 
                 var div4 = document.createElement("div");
                 $(div4).addClass("modal-header d-flex justify-content-between");
                 var div5 = document.createElement("div");
                 $(div5).addClass("modal-body");
+                if (screen.width < 900) {
+                    $(div5).attr("style", "padding: 0");
+                }
                 var div6 = document.createElement("div");
                 $(div6).addClass("modal-footer");
                 var div7 = document.createElement("div");
@@ -449,11 +458,25 @@ var PygameLib = {};
         self.offscreen_canvas = document.createElement('canvas');
         self.context2d = self.offscreen_canvas.getContext("2d");
 
-        self.offscreen_canvas.width = tuple_js[0];
-        self.offscreen_canvas.height = tuple_js[1];
+        //self.offscreen_canvas.width = tuple_js[0];
+        //self.offscreen_canvas.height = tuple_js[1];
+        if (screen.width >= 500) {
+            self.offscreen_canvas.width = tuple_js[0];
+            self.offscreen_canvas.height = tuple_js[1];
+        }
+        else {
+            self.offscreen_canvas.width = screen.width * 85 / 100;
+            self.offscreen_canvas.height = screen.height * 75 / 100;
+        }
 
-        self.main_canvas.setAttribute('width', self.width);
-        self.main_canvas.setAttribute('height', self.height);
+        if (screen.width >= 500) {
+            self.main_canvas.setAttribute('width', self.width);
+            self.main_canvas.setAttribute('height', self.height);
+        }
+        else {
+            self.main_canvas.setAttribute('width', screen.width * 85 / 100);
+            self.main_canvas.setAttribute('hght', screen.height * 75 / 100);
+        }
         return Sk.builtin.none.none$;
     };
     init$1.co_name = new Sk.builtins['str']('__init__');
