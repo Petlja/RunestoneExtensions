@@ -105,8 +105,8 @@ var PygameLib = {};
         for (var k in pygame_modules) {
             Sk.externalLibraries[k] = pygame_modules[k];
         }
-        PygameLib.eventSource.addEventListener("keydown", keyEventListener);
-        PygameLib.eventSource.addEventListener("keyup", keyEventListener);
+        //PygameLib.eventSource.addEventListener("keydown", keyEventListener);
+        //PygameLib.eventSource.addEventListener("keyup", keyEventListener);
         PygameLib.imgPath = "/_images/";
     }
 
@@ -185,8 +185,8 @@ var PygameLib = {};
 
     
 
-    
-    function resetTarget() {
+    //MOVED TO ACTIVE, REMOVE
+   /* function resetTarget() {
         var selector = Sk.TurtleGraphics.target;
         var target = typeof selector === "string" ?
             document.getElementById(selector) :
@@ -198,6 +198,8 @@ var PygameLib = {};
         return target;
     }
 
+
+    //MOVED TO ACTIVE, REMOVE
     function createArrows(div) {
         var arrows = new Array(4);
         var direction = ["left", "right", "up", "down"];
@@ -301,7 +303,7 @@ var PygameLib = {};
                     break;
             }
         });
-    }
+    } */
 
     var mouseEventListener = function(event) {
         var totalOffsetX = 0;
@@ -372,14 +374,18 @@ var PygameLib = {};
         self.main_canvas.height = self.height;
 
         if (main) {
+
+            self.main_canvas = Sk.main_canvas;
             self.main_canvas.addEventListener('mousedown', mouseEventListener);
             self.main_canvas.addEventListener('mouseup', mouseEventListener);
             self.main_canvas.addEventListener('mousemove', mouseEventListener);
+            window.addEventListener("keydown", keyEventListener);
+            window.addEventListener("keyup", keyEventListener);
             $(self.main_canvas).css("border", "1px solid blue");
+            //MOVED TO ACTIVECODE, REMOVE
+            //var currentTarget = resetTarget();
 
-            var currentTarget = resetTarget();
-
-            if (PygameLib.useModal) {
+            /*  if (PygameLib.useModal) {
                 var div1 = document.createElement("div");
                 currentTarget.appendChild(div1);
                 PygameLib.modalDiv = div1;
@@ -442,10 +448,12 @@ var PygameLib = {};
             }
             else {
                 currentTarget.appendChild(self.main_canvas);
-            }
+            } */
         }
 
         self.main_context = self.main_canvas.getContext("2d");
+
+
         self.offscreen_canvas = document.createElement('canvas');
         self.context2d = self.offscreen_canvas.getContext("2d");
 
@@ -454,8 +462,21 @@ var PygameLib = {};
 
         self.main_canvas.setAttribute('width', self.width);
         self.main_canvas.setAttribute('height', self.height);
+
+
+        fillBlack(self.main_context, self.main_canvas.width, self.main_canvas.height);
+        fillBlack(self.context2d, self.width, self.height);
+
         return Sk.builtin.none.none$;
     };
+
+
+    function fillBlack(ctx, w, h) {
+        ctx.beginPath();
+        ctx.rect(0, 0, w-1, h-1);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.0)";
+        ctx.fill();
+    }
     init$1.co_name = new Sk.builtins['str']('__init__');
     init$1.co_varnames = ['self', 'size', 'flags', 'depth', 'masks'];
     init$1.$defaults = [new Sk.builtin.int_(0), new Sk.builtin.int_(0), Sk.builtin.none.none$];
