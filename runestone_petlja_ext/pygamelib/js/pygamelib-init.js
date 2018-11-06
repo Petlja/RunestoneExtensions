@@ -35,10 +35,4 @@ Sk.externalLibraries = {
         path: basePath + 'version.js',
     },
 };
-   // for (var k in pygame_modules) {
-  //      Sk.externalLibraries[k] = pygame_modules[k];
-   // }
-    //PygameLib.eventSource.addEventListener("keydown", keyEventListener);
-    //PygameLib.eventSource.addEventListener("keyup", keyEventListener);
-    //PygameLib.imgPath = "/_images/";
  
