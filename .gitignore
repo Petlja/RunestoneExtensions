@@ -2,3 +2,8 @@ runestone_petlja_ext.egg-info
 __pycache__
 .vscode
 *.sublime-workspace
+*.pyc
+runestone_petlja_ext/karel/__pycache__/karel.cpython-37.pyc
+runestone_petlja_ext/karel/__pycache__/__init__.cpython-37.pyc
+runestone_petlja_ext/__pycache__/__init__.cpython-37.pyc
+bootstrap_petlja_theme/__pycache__/__init__.cpython-37.pyc

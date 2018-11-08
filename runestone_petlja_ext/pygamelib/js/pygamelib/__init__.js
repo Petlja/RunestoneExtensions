@@ -1172,7 +1172,7 @@ var init$1 = function $__init__123$(self, size, fullscreen = false, main = true)
         window.addEventListener("keydown", keyEventListener);
         window.addEventListener("keyup", keyEventListener);
 
-        if (fullscreen) {
+        /*if (fullscreen) {
             self.width = window.innerWidth;
             self.height = window.innerHeight;
             self.main_canvas.style["z-index"] = "100";
@@ -1190,7 +1190,7 @@ var init$1 = function $__init__123$(self, size, fullscreen = false, main = true)
                 self.offscreen_canvas.height = self.height;
                 self.context2d.drawImage(self.main_canvas, 0, 0);
             };
-        }
+        } */
     }
     self.main_canvas.width = self.width;
     self.main_canvas.height = self.height;

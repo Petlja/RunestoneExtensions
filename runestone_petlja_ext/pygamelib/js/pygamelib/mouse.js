@@ -1,4 +1,4 @@
-var $builtinmodule =  function (name) {
+var $builtinmodule = function (name) {
     mod = {};
     mod.get_pressed = new Sk.builtin.func(function () {
         return Sk.ffi.remapToPy(PygameLib.mouseData["button"]);

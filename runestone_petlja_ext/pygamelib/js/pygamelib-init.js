@@ -35,4 +35,4 @@ Sk.externalLibraries = {
         path: basePath + 'version.js',
     },
 };
- 
+ Sk.imgPath = "/_images/";

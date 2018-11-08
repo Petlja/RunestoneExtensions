@@ -1,64 +1,60 @@
-//keys functionality
-var $builtinmodule  = function(name) {
-        mod = {};
-
-        mod.set_repeat = new Sk.builtin.func(function (delay, interval) {
-            // TODO: consider a more realistic implementation where the interval is taken into account
-            if (delay !== undefined) {
-                PygameLib.repeatKeys = true;
-            } else {
-                PygameLib.repeatKeys = false;
-            }
-        });
-        mod.get_repeat = new Sk.builtin.func(function() {
-            if (PygameLib.repeatKeys) {
-                return Sk.builtin.tuple([1, 1]);
-            } else {
-                return Sk.builtin.tuple([0, 0]);
-            }
-        });
-        mod.get_focused = new Sk.builtin.func(function () {
-            return Sk.ffi.remapToPy(document.hasFocus());
-        });
-        mod.get_pressed = new Sk.builtin.func(function () {
-            var pressed = new Array(323).fill(false);
-            for (var i = 0; i < PygameLib.eventQueue.length; i++) {
-                pressed[PygameLib.eventQueue[i][1].key] = true;
-            }
-            return Sk.ffi.remapToPy(pressed);
-        });
-        mod.get_mods = new Sk.builtin.func(function () {
-            var mask = 0;
-            for (var i = 0; i < PygameLib.eventQueue.length; i++) {
-                for (var j = 0; j < keyboardModifierKeys.length; j++) {
-                    if (PygameLib.eventQueue[i][1].key === keyboardModifierKeys[j]) {
-                        mask &= 1 << j;
-                    }
+var $builtinmodule = function (name) {
+    mod = {};
+    mod.set_repeat = new Sk.builtin.func(function (delay, interval) {
+        if (delay !== undefined) {
+            PygameLib.repeatKeys = true;
+        } else {
+            PygameLib.repeatKeys = false;
+        }
+    });
+    mod.get_repeat = new Sk.builtin.func(function () {
+        if (PygameLib.repeatKeys) {
+            return Sk.builtin.tuple([1, 1]);
+        } else {
+            return Sk.builtin.tuple([0, 0]);
+        }
+    });
+    mod.get_focused = new Sk.builtin.func(function () {
+        return Sk.ffi.remapToPy(document.hasFocus());
+    });
+    mod.get_pressed = new Sk.builtin.func(function () {
+        var pressed = new Array(323).fill(false);
+        for (var i = 0; i < PygameLib.eventQueue.length; i++) {
+            pressed[PygameLib.eventQueue[i][1].key] = true;
+        }
+        return Sk.ffi.remapToPy(pressed);
+    });
+    mod.get_mods = new Sk.builtin.func(function () {
+        var mask = 0;
+        for (var i = 0; i < PygameLib.eventQueue.length; i++) {
+            for (var j = 0; j < keyboardModifierKeys.length; j++) {
+                if (PygameLib.eventQueue[i][1].key === keyboardModifierKeys[j]) {
+                    mask &= 1 << j;
                 }
             }
-            return Sk.ffi.remapToPy(mask);
-        });
-        mod.set_mods = new Sk.builtin.func(function(m) {
-            var mask = Sk.ffi.remapToJs(m);
-            for (var i = 0; i < keyboardModifierKeys.length; i++) {
-                if (mask & (1 << i)) {
-                    PygameLib.eventQueue.unshift([PygameLib.constants.KEYDOWN, { key: keyboardModifierKeys[i]}]);
-                }
+        }
+        return Sk.ffi.remapToPy(mask);
+    });
+    mod.set_mods = new Sk.builtin.func(function (m) {
+        var mask = Sk.ffi.remapToJs(m);
+        for (var i = 0; i < keyboardModifierKeys.length; i++) {
+            if (mask & (1 << i)) {
+                PygameLib.eventQueue.unshift([PygameLib.constants.KEYDOWN, {key: keyboardModifierKeys[i]}]);
             }
+        }
 
-        });
-        mod.name = new Sk.builtin.func(function (idx) {
-            var i = Sk.ffi.remapToJs(idx);
-            if (i < 0 || i >= 323) {
-                return Sk.ffi.remapToPy("unknown key");
-            }
-            return Sk.ffi.remapToPy(keyToName[i]);
-        });
-        return mod;
-    };
+    });
+    mod.name = new Sk.builtin.func(function (idx) {
+        var i = Sk.ffi.remapToJs(idx);
+        if (i < 0 || i >= 323) {
+            return Sk.ffi.remapToPy("unknown key");
+        }
+        return Sk.ffi.remapToPy(keyToName[i]);
+    });
+    return mod;
+};
 
-
-    var keyToName = ['unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
+keyToName = ['unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key', 'unknown key',
     'unknown key', 'unknown key', 'backspace', 'tab', 'unknown key', 'unknown key', 'clear', 'return', 'unknown key',
     'unknown key', 'unknown key', 'unknown key', 'unknown key', 'pause', 'unknown key', 'unknown key', 'unknown key',
     'unknown key', 'unknown key', 'unknown key', 'unknown key', 'escape', 'unknown key', 'unknown key', 'unknown key',
@@ -91,8 +87,8 @@ var $builtinmodule  = function(name) {
     'right shift', 'left shift', 'right ctrl', 'left ctrl', 'right alt', 'left alt', 'right meta', 'left meta',
     'left super', 'right super', 'alt gr', 'compose', 'help', 'print screen', 'sys req', 'break', 'menu', 'power',
     'euro', 'undo', 'unknown key'];
-
 var keyboardModifierKeys = [PygameLib.constants.K_LSHIFT, PygameLib.constants.K_RSHIFT, 0, 0, 0, 0,
     PygameLib.constants.K_LCTRL, PygameLib.constants.K_RCTRL, PygameLib.constants.K_LALT, PygameLib.constants.K_RALT,
     PygameLib.constants.K_LMETA, PygameLib.constants.K_RMETA, 0, PygameLib.constants.K_CAPSLOCK,
     PygameLib.constants.K_NUMLOCK, PygameLib.constants.K_MODE];
+    
