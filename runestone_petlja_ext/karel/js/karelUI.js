@@ -122,17 +122,14 @@ $(document).ready(function() {
 							}
 						});
                     },
-                    function(err) {
+                    function (err) {
                         drawer.stop();
                         var message = "";
                         var otherError = false;
-                        if (err.nativeError == "Crashed")
-                            message = $.i18n("msg_karel_crashed");
-                        else if (err.nativeError == "No-ball")
-                            message = $.i18n("msg_karel_no_ball");
-                        else   {
-                            message = err.NativeError;
-                            showError(message);
+                        if ((err.nativeError == "crashed") || (err.nativeError == "no_ball") || (err.nativeError == "out_of_bounds"))
+                            message = $.i18n("msg_karel_" + err.nativeError);
+                        else {
+                            showError(err);
                             otherError = true;
                         }
                         if (!otherError)
