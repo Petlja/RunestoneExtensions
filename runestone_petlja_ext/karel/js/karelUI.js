@@ -117,14 +117,26 @@ $(document).ready(function() {
 								if(result){
 									showEndMessageSuccess();
 								} else {
-									showEndMessageError();
+									showEndMessageError("Нетачно!");
 								}
 							}
 						});
                     },
                     function(err) {
-						drawer.stop();
-                        showError(err.toString());
+                        drawer.stop();
+                        var message = "";
+                        var otherError = false;
+                        if (err.nativeError == "Crashed")
+                            message = $.i18n("msg_karel_crashed");
+                        else if (err.nativeError == "No-ball")
+                            message = $.i18n("msg_karel_no_ball");
+                        else   {
+                            message = err.NativeError;
+                            showError(message);
+                            otherError = true;
+                        }
+                        if (!otherError)
+                            showEndMessageError(message);
                     }
                 );
             } catch(e) {
@@ -143,10 +155,10 @@ $(document).ready(function() {
             eContainer.appendChild(msgHead[0]);
 		}
 
-		function showEndMessageError(){
+		function showEndMessageError(messsage){
             var eContainer = outerDiv.appendChild(document.createElement('div'));
             eContainer.className = 'col-md-12 alert alert-danger';
-            var msgHead = $('<p>').html('Нетачно.');
+            var msgHead = $('<p>').html(messsage);
             eContainer.appendChild(msgHead[0]);
 		}
 
