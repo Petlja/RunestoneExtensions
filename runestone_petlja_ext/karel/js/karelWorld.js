@@ -121,7 +121,7 @@ var World = (function () {
 	    this.setBalls(a, s, this.getBalls(a, s) - 1);
 	    return true;
 	}
-        throw "No ball at corner";
+        throw "no_ball";
     };
 
     World.prototype.putBall = function (a, s) {

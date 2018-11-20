@@ -98,36 +98,36 @@ var Robot = (function () {
         switch (this.getDirection()) {
             case "N":
                 if(!(this.world.isInBounds(this.getAvenue(), this.getStreet()+1))){
-                    throw "Out of bounds"
+                    throw "out_of_bounds"
                 } else if(this.world.checkEWWall(this.getAvenue(), this.getStreet())) {
-                    throw "Crashed";
+                    throw "crashed";
                 } else{
                     this.setStreet(this.getStreet()+1);
                 }
                 break;
             case "S":
                 if(!(this.world.isInBounds(this.getAvenue(), this.getStreet()-1))){
-                    throw "Out of bounds"
+                    throw "out_of_bounds"
                 } else if(this.world.checkEWWall(this.getAvenue(), this.getStreet()-1)) {
-                    throw "Crashed";
+                    throw "crashed";
                 } else{
                     this.setStreet(this.getStreet()-1);
                 }
                 break;
             case "E":
                 if(!(this.world.isInBounds(this.getAvenue()+1, this.getStreet()))){
-                    throw "Out of bounds"
+                    throw "out_of_bounds"
                 } else if(this.world.checkNSWall(this.getAvenue(), this.getStreet())) {
-                    throw "Crashed";
+                    throw "crashed";
                 } else{
                     this.setAvenue(this.getAvenue()+1);
                 }
                 break;
             case "W":
                 if(!(this.world.isInBounds(this.getAvenue()-1, this.getStreet()))){
-                    throw "Out of bounds"
+                    throw "out_of_bounds"
                 } else if(this.world.checkNSWall(this.getAvenue()-1, this.getStreet())) {
-                    throw "Crashed";
+                    throw "crashed";
                 } else{
                     this.setAvenue(this.getAvenue()-1);
                 }
