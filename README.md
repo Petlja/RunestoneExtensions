@@ -12,12 +12,14 @@ The implemented theme:
 
 ## Using Extensions to RunestoneComponents in your interactive book project
 
+- You need to have python installed (at least version 3.6) and included in the PATH environment variable
 - If you already have the `runestone` package installed in your environment, remove it with  
 `pip uninstall runestone`
 - Clone this repositori and the repository https://github.com/Petlja/RunestoneComponents-Petlja 
 - In both folders where you have cloned those two repositories, run  
 `pip install -e .` 
 - When you need to update installed packages, just do `git pull` in both folders
+- If you want to start a new interactive book project, make the project folder and run `runestone init` in that folder
 - In the `conf.py` of your interactive book project make those changes (if someone other has not already done so):
     - after other imports add  
       `import runestone_petlja_ext`
@@ -33,6 +35,8 @@ The implemented theme:
       `html_theme = 'bootstrap_petlja_theme'` 
     - at the end of `conf.py` add line 
     `runestone_petlja_ext.config_values_for_components(globals())`
+- use `runestone build` and `runestone serve` to build and preview your interactive book
+- more instructions you can find at: `http://runestoneinteractive.org/instructors.html`, but also take a look at other Petlja's interactive books
 
 
 ## Notes for developers
