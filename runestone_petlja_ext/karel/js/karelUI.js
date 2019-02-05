@@ -73,7 +73,7 @@ $(document).ready(function() {
             var code = editor.getValue().replace(/\?\?\?\s+/g, "___ ")
             .replace(/\?\?\?/g,"___");
             var bpm = new BlocklPyModal();
-            bpm.open("Карел", 700, 500, code, '/_runestone/_static/blockly/',
+            bpm.open("Карел", 700, 500, code, '_static/blockly/',
                function(src) {
                   if(src) {
                     editor.setValue("from karel import * \n" + src.replace(/\_\_\_/g,"???"));
@@ -98,7 +98,7 @@ $(document).ready(function() {
             Sk.Karel = {drawer: drawer, config: config};
             Sk.externalLibraries = {
                 karel : {
-                    path: '/_runestone/_static/karel.js',
+                    path: '_static/karel.js',
                 }
             };
             //Sk.pre = "edoutput";
