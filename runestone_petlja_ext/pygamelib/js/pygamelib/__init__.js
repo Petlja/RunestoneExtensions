@@ -1090,6 +1090,8 @@ function pygame_init() {
     pygame_m.$d['event'] = display_m.$d['event'];
     pygame_m.$d['draw'] = display_m.$d['draw'];
     pygame_m.$d['image'] = display_m.$d['image'];
+    delete PygameLib.eventQueue;
+    delete PygameLib.eventTimer;
     PygameLib.eventQueue = [];
     PygameLib.eventTimer = {};
     PygameLib.running = true;
@@ -1206,6 +1208,7 @@ var init$1 = function $__init__123$(self, size, fullscreen = false, main = true)
     fillBlack(self.main_context, self.main_canvas.width, self.main_canvas.height);
     fillBlack(self.context2d, self.width, self.height);
     return Sk.builtin.none.none$;
+    
 };
 
 function fillBlack(ctx, w, h) {
