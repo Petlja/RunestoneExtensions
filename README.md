@@ -35,6 +35,7 @@ The implemented theme:
       `html_theme = 'bootstrap_petlja_theme'` 
     - at the end of `conf.py` add line 
     `runestone_petlja_ext.config_values_for_components(globals())`
+- consider to set `'python3': 'true'` in `pavement.py`
 - use `runestone build` and `runestone serve` to build and preview your interactive book
 - more instructions you can find at: `http://runestoneinteractive.org/instructors.html`, but also take a look at other Petlja's interactive books
 

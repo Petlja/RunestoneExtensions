@@ -62,6 +62,9 @@ $(document).ready(function() {
 
         $(this).find(".run-button").click(function () {
             var program = editor.getValue();
+
+            $('.run-button').attr('disabled', 'disabled');
+            $('.reset-button').attr('disabled', 'disabled');
             executeProgram(program);
         });
 
@@ -90,13 +93,10 @@ $(document).ready(function() {
                 throw "File not found: '" + x + "'";
             return Sk.builtinFiles["files"][x];
         }
-
         function executeProgram(program, skipValidation) {
             Sk.configure({output: outf, read: builtinRead});
             Sk.canvas = canvas;
-
-	    var drawer = new RobotDrawer(canvas, 100);
-
+ 	          var drawer = new RobotDrawer(canvas, 500);
             Sk.Karel = {drawer: drawer, config: config};
             Sk.externalLibraries = {
                 karel : {
@@ -120,23 +120,25 @@ $(document).ready(function() {
 								if(result){
 									showEndMessageSuccess();
 								} else {
-									showEndMessageError("Нетачно!");
+                                    showEndMessageError("Нетачно.");
 								}
 							}
 						});
                     },
                     function (err) {
-                        drawer.stop();
-                        var message = "";
-                        var otherError = false;
-                        if ((err.nativeError == "crashed") || (err.nativeError == "no_ball") || (err.nativeError == "out_of_bounds") || (err.nativeError == "no_balls_with_robot"))
-                            message = $.i18n("msg_karel_" + err.nativeError);
-                        else {
-                            showError(err);
-                            otherError = true;
-                        }
-                        if (!otherError)
-                            showEndMessageError(message);
+                        drawer.stop(function () {
+                            var message = "";
+                            var otherError = false;
+                            if ((err.nativeError == "crashed") || (err.nativeError == "no_ball") || (err.nativeError == "out_of_bounds") || (err.nativeError == "no_balls_with_robot"))
+                                message = $.i18n("msg_karel_" + err.nativeError);
+                            else {
+                                showError(err);
+                                otherError = true;
+                            }
+                            if (!otherError)
+                                showEndMessageError(message);
+
+                        });
                     }
                 );
             } catch(e) {
@@ -144,7 +146,9 @@ $(document).ready(function() {
             }
         }
 
-        function reset(){
+        function reset() {
+            $('.run-button').removeAttr('disabled');
+            $('.reset-button').removeAttr('disabled');
             executeProgram("import karel", true);
         }
 
@@ -153,13 +157,17 @@ $(document).ready(function() {
             eContainer.className = 'col-md-12 alert alert-success';
             var msgHead = $('<p>').html('Тачно!');
             eContainer.appendChild(msgHead[0]);
+            $('.run-button').removeAttr('disabled')
+            $('.reset-button').removeAttr('disabled');;
 		}
 
-		function showEndMessageError(messsage){
+		function showEndMessageError(message){
             var eContainer = outerDiv.appendChild(document.createElement('div'));
             eContainer.className = 'col-md-12 alert alert-danger';
-            var msgHead = $('<p>').html(messsage);
+            var msgHead = $('<p>').html(message);
             eContainer.appendChild(msgHead[0]);
+            $('.run-button').removeAttr('disabled');
+            $('.reset-button').removeAttr('disabled');
 		}
 
         function showError(err) {
@@ -187,6 +195,8 @@ $(document).ready(function() {
 			}
             //var moreInfo = '../ErrorHelp/' + errName.toLowerCase() + '.html';
             console.log("Runtime Error: " + err.toString());
+            $('.run-button').removeAttr('disabled');
+            $('.reset-button').removeAttr('disabled');
         };
 
         function clearError(){

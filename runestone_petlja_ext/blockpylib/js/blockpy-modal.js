@@ -242,5 +242,5 @@ BlocklPyModal.toolboxXml = `
   <block type="lists_create_empty"></block>
   <block type="lists_append"></block>
   <block type="range_list1"></block>
+</category>    
 </xml>`;
-
