@@ -2,44 +2,47 @@
 
 $(document).ready(function() {
     var errorText = {};
-
-    errorText.ParseError = "A parse error means that Python does not understand the syntax on the line the error message points out.  Common examples are forgetting commas beteween arguments or forgetting a : on a for statement";
-    errorText.ParseErrorFix = "To fix a parse error you just need to look carefully at the line with the error and possibly the line before it.  Make sure it conforms to all of Python's rules.";
-    errorText.TypeError = "Type errors most often occur when an expression tries to combine two objects with types that should not be combined.  Like raising a string to a power";
-    errorText.TypeErrorFix = "To fix a type error you will most likely need to trace through your code and make sure the variables have the types you expect them to have.  It may be helpful to print out each variable along the way to be sure its value is what you think it should be.";
-    errorText.NameError = "A name error almost always means that you have used a variable before it has a value.  Often this may be a simple typo, so check the spelling carefully.";
-    errorText.NameErrorFix = "Check the right hand side of assignment statements and your function calls, this is the most likely place for a NameError to be found.";
-    errorText.ValueError = "A ValueError most often occurs when you pass a parameter to a function and the function is expecting one type and you pass another.";
-    errorText.ValueErrorFix = "The error message gives you a pretty good hint about the name of the function as well as the value that is incorrect.  Look at the error message closely and then trace back to the variable containing the problematic value.";
-    errorText.AttributeError = "This error message is telling you that the object on the left hand side of the dot, does not have the attribute or method on the right hand side.";
-    errorText.AttributeErrorFix = "The most common variant of this message is that the object undefined does not have attribute X.  This tells you that the object on the left hand side of the dot is not what you think. Trace the variable back and print it out in various places until you discover where it becomes undefined.  Otherwise check the attribute on the right hand side of the dot for a typo.";
-    errorText.TokenError = "Most of the time this error indicates that you have forgotten a right parenthesis or have forgotten to close a pair of quotes.";
-    errorText.TokenErrorFix = "Check each line of your program and make sure that your parenthesis are balanced.";
-    errorText.TimeLimitError = "Your program is running too long.  Most programs in this book should run in less than 10 seconds easily. This probably indicates your program is in an infinite loop.";
-    errorText.TimeLimitErrorFix = "Add some print statements to figure out if your program is in an infinte loop.  If it is not you can increase the run time with sys.setExecutionLimit(msecs)";
-    errorText.Error = "Your program is running for too long.  Most programs in this book should run in less than 30 seconds easily. This probably indicates your program is in an infinite loop.";
-    errorText.ErrorFix = "Add some print statements to figure out if your program is in an infinte loop.  If it is not you can increase the run time with sys.setExecutionLimit(msecs)";
-    errorText.SyntaxError = "This message indicates that Python can't figure out the syntax of a particular statement.  Some examples are assigning to a literal, or a function call";
-    errorText.SyntaxErrorFix = "Check your assignment statments and make sure that the left hand side of the assignment is a variable, not a literal or a function.";
-    errorText.IndexError = "This message means that you are trying to index past the end of a string or a list.  For example if your list has 3 things in it and you try to access the item at position 3 or more.";
-    errorText.IndexErrorFix = "Remember that the first item in a list or string is at index position 0, quite often this message comes about because you are off by one.  Remember in a list of length 3 the last legal index is 2";
-    errorText.URIError = "";
-    errorText.URIErrorFix = "";
-    errorText.ImportError = "This error message indicates that you are trying to import a module that does not exist";
-    errorText.ImportErrorFix = "One problem may simply be that you have a typo.  It may also be that you are trying to import a module that exists in 'real' Python, but does not exist in this book.  If this is the case, please submit a feature request to have the module added.";
-    errorText.ReferenceError = "This is most likely an internal error, particularly if the message references the console.";
-    errorText.ReferenceErrorFix = "Try refreshing the webpage, and if the error continues, submit a bug report along with your code";
-    errorText.ZeroDivisionError = "This tells you that you are trying to divide by 0. Typically this is because the value of the variable in the denominator of a division expression has the value 0";
-    errorText.ZeroDivisionErrorFix = "You may need to protect against dividing by 0 with an if statment, or you may need to rexamine your assumptions about the legal values of variables, it could be an earlier statment that is unexpectedly assigning a value of zero to the variable in question.";
-    errorText.RangeError = "This message almost always shows up in the form of Maximum call stack size exceeded.";
-    errorText.RangeErrorFix = "This always occurs when a function calls itself.  Its pretty likely that you are not doing this on purpose. Except in the chapter on recursion.  If you are in that chapter then its likely you haven't identified a good base case.";
-    errorText.InternalError = "An Internal error may mean that you've triggered a bug in our Python";
-    errorText.InternalErrorFix = "Report this error, along with your code as a bug.";
-    errorText.IndentationError = "This error occurs when you have not indented your code properly.  This is most likely to happen as part of an if, for, while or def statement.";
-    errorText.IndentationErrorFix = "Check your if, def, for, and while statements to be sure the lines are properly indented beneath them.  Another source of this error comes from copying and pasting code where you have accidentally left some bits of code lying around that don't belong there anymore.";
-    errorText.NotImplementedError = "This error occurs when you try to use a builtin function of Python that has not been implemented in this in-browser version of Python.";
-    errorText.NotImplementedErrorFix = "For now the only way to fix this is to not use the function.  There may be workarounds.  If you really need this builtin function then file a bug report and tell us how you are trying to use the function.";
-
+    
+    errorText.ErrorTitle = $.i18n("msg_activecode_error_title");
+    errorText.DescriptionTitle = $.i18n("msg_activecode_description_title");
+    errorText.ToFixTitle = $.i18n("msg_activecode_to_fix_title");
+    errorText.ParseError = $.i18n("msg_activecode_parse_error");
+    errorText.ParseErrorFix = $.i18n( "msg_activecode_parse_error_fix");
+    errorText.TypeError = $.i18n("msg_activecode_type_error");
+    errorText.TypeErrorFix = $.i18n("msg_activecode_type_error_fix");
+    errorText.NameError = $.i18n("msg_activecode_name_error");
+    errorText.NameErrorFix = $.i18n("msg_activecode_name_error_fix");
+    errorText.ValueError = $.i18n("msg_activecode_value_error");
+    errorText.ValueErrorFix = $.i18n("msg_activecode_value_error_fix");
+    errorText.AttributeError = $.i18n("msg_activecode_attribute_error");
+    errorText.AttributeErrorFix = $.i18n("msg_activecode_attribute_error_fix");
+    errorText.TokenError = $.i18n("msg_activecode_token_error");
+    errorText.TokenErrorFix =  $.i18n("msg_activecode_token_error_fix");
+    errorText.TimeLimitError = $.i18n("msg_activecode_time_limit_error");
+    errorText.TimeLimitErrorFix = $.i18n("msg_activecode_time_limit_error_fix");
+    errorText.Error = $.i18n("msg_activecode_general_error");
+    errorText.ErrorFix = $.i18n("msg_activecode_general_error_fix");
+    errorText.SyntaxError = $.i18n("msg_activecode_syntax_error");
+    errorText.SyntaxErrorFix = $.i18n("msg_activecode_syntax_error_fix");
+    errorText.IndexError = $.i18n("msg_activecode_index_error");
+    errorText.IndexErrorFix = $.i18n("msg_activecode_index_error_fix");
+    errorText.URIError = $.i18n("msg_activecode_uri_error");
+    errorText.URIErrorFix = $.i18n("msg_activecode_uri_error_fix");
+    errorText.ImportError = $.i18n("msg_activecode_import_error");
+    errorText.ImportErrorFix = $.i18n("msg_activecode_import_error_fix");
+    errorText.ReferenceError = $.i18n("msg_activecode_reference_error");
+    errorText.ReferenceErrorFix = $.i18n("msg_activecode_reference_error_fix");
+    errorText.ZeroDivisionError = $.i18n("msg_activecode_zero_division_error");
+    errorText.ZeroDivisionErrorFix = $.i18n("msg_activecode_zero_division_error_fix");
+    errorText.RangeError = $.i18n("msg_activecode_range_error");
+    errorText.RangeErrorFix = $.i18n("msg_activecode_range_error_fix");
+    errorText.InternalError = $.i18n("msg_activecode_internal_error");
+    errorText.InternalErrorFix = $.i18n("msg_activecode_internal_error_fix");
+    errorText.IndentationError = $.i18n("msg_activecode_indentation_error");
+    errorText.IndentationErrorFix = $.i18n("msg_activecode_indentation_error_fix");
+    errorText.NotImplementedError = $.i18n("msg_activecode_not_implemented_error");
+    errorText.NotImplementedErrorFix = $.i18n("msg_activecode_not_implemented_error_fix");
+    
     $('[data-component=karel]').each( function(index ) {
         var outerDiv = $(this)[0];
         var canvas = $(this).find(".world")[0];
@@ -92,7 +95,7 @@ $(document).ready(function() {
             Sk.configure({output: outf, read: builtinRead});
             Sk.canvas = canvas;
 
-	    var drawer = new RobotDrawer(canvas, 500);
+	    var drawer = new RobotDrawer(canvas, 100);
 
             Sk.Karel = {drawer: drawer, config: config};
             Sk.externalLibraries = {
@@ -126,7 +129,7 @@ $(document).ready(function() {
                         drawer.stop();
                         var message = "";
                         var otherError = false;
-                        if ((err.nativeError == "crashed") || (err.nativeError == "no_ball") || (err.nativeError == "out_of_bounds"))
+                        if ((err.nativeError == "crashed") || (err.nativeError == "no_ball") || (err.nativeError == "out_of_bounds") || (err.nativeError == "no_balls_with_robot"))
                             message = $.i18n("msg_karel_" + err.nativeError);
                         else {
                             showError(err);
@@ -161,7 +164,7 @@ $(document).ready(function() {
 
         function showError(err) {
             //logRunEvent({'div_id': this.divid, 'code': this.prog, 'errinfo': err.toString()}); // Log the run event
-            var errHead = $('<h3>').html('Error');
+            var errHead = $('<h3>').html(errorText.ErrorTitle);
             var eContainer = outerDiv.appendChild(document.createElement('div'));
             eContainer.className = 'col-md-12 error alert alert-danger';
             eContainer.appendChild(errHead[0]);
@@ -173,12 +176,12 @@ $(document).ready(function() {
 			var desc = errorText[errName];
 			var fix = errorText[errName+'Fix'];
 			if(desc){
-				$(eContainer).append('<h3>Description</h3>');
+				$(eContainer).append('<h3>' + errorText.DescriptionTitle + '</h3>');
 				var errDesc = eContainer.appendChild(document.createElement('p'));
 				errDesc.innerHTML = desc;
 			}
 			if(fix){
-				$(eContainer).append('<h3>To Fix</h3>');
+				$(eContainer).append('<h3>' + errorText.ToFixTitle + '</h3>');
 				var errFix = eContainer.appendChild(document.createElement('p'));
 				errFix.innerHTML = fix;
 			}
