@@ -169,7 +169,7 @@ var Robot = (function () {
 
     Robot.prototype.putBall = function () {
         if((this.getBalls()===0) && (!this.infiniteBalls)){
-            throw "No balls with Karel";
+            throw "no_balls_with_robot";
         }
 
         this.world.putBall(this.getAvenue(), this.getStreet());
