@@ -263,9 +263,9 @@ var RobotDrawer = (function () {
                         ctx.fillStyle = fontStyle;
                         ctx.font = fontSize + "px Arial";
                         var text_width = ctx.measureText(nb).width;
-                        var text_height = getTextHeight(ctx.font).height;
-                        if (fontSize <= 5) break;
-                        if (Math.pow(text_width, 2) + Math.pow(text_height, 2) <= width * height)
+                        var text_height = getTextHeight(ctx.font).ascent; // this text is digits only, so ascent is enough
+                        if (fontSize <= 8) break;
+                        if ((text_width <= width) && (text_height <= height))
                             break;
                         fontSize--;
                     }
