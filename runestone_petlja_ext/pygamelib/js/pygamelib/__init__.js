@@ -1205,6 +1205,7 @@ var init$1 = function $__init__123$(self, size, fullscreen = false, main = true)
     self.offscreen_canvas.height = self.height;
     self.main_canvas.setAttribute('width', self.width);
     self.main_canvas.setAttribute('height', self.height);
+    self.main_canvas.setAttribute('style', "border: 1px solid darkgray;");
     fillBlack(self.main_context, self.main_canvas.width, self.main_canvas.height);
     fillBlack(self.context2d, self.width, self.height);
     return Sk.builtin.none.none$;
