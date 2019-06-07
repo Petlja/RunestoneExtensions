@@ -40,7 +40,7 @@ TEMPLATE_START = """
         <p>
 """
 
-TEMPLATE_END = """
+TEMPLATE_END_SRP = """
     <div data-component="karel" id="%(divid)s" class="karel_section">
         <div class="karel_actions col-md-12 mb-2"><button class="btn btn-success run-button">Покрени програм</button>
         <button class="btn btn-default reset-button">Врати на почетак</button>
@@ -65,6 +65,33 @@ TEMPLATE_END = """
 </p></div></div>
 
 """
+
+TEMPLATE_END_EN = """
+    <div data-component="karel" id="%(divid)s" class="karel_section">
+        <div class="karel_actions col-md-12 mb-2"><button class="btn btn-success run-button">Run</button>
+        <button class="btn btn-default reset-button">Reset</button>
+        <button class="btn btn-default blockly-button" style="display: %(blockly)s;">Blockly</button></div>
+        <div style="overflow: hidden;" class="karel_actions col-md-12" >
+            <section class="col-md-12">
+                <article>
+                    <textarea class="codeArea" id="%(divid)s" name="code" rows="10" style="width: 100%%;height:300px"></textarea>
+                    <textarea class="configArea" style="display:none"><!--x %(initialcode)s x--></textarea>
+                </article>
+            </section>
+            <section class="col-md-12">
+                <article>
+                    <canvas class="world" style="border-style: solid; border-width: 2px; border-color: inherit; background: white;" width="600" height="300">
+                        <p>Please try loading this page in HTML5 enabled web browsers. All the latest versions of famous browsers such as Internet explorer, Chrome, Firefox, Opera support HTML5.</p>
+                    </canvas>
+                </article>
+            </section>
+        </div>
+    </div>
+    <p class="karel_caption karel_caption_text"> (%(divid)s)</p>
+</p></div></div>
+
+"""
+TEMPLATE_END = TEMPLATE_END_EN
 
 class KarelNode(nodes.General, nodes.Element):
     def __init__(self, content):

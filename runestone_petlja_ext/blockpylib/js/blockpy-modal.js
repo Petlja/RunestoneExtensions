@@ -44,7 +44,8 @@ BlocklPyModal.prototype.open = function(title, width, height, pythonSrc, blockly
 
     var btnSave = document.createElement("span");
     $(btnSave).addClass("btn btn-primary");
-    $(btnSave).text("Vrati u Python  ");
+    $(btnSave).text("Return to Python  ");
+    // $(btnSave).text("Vrati u Python  ");
     var icBtnSave = document.createElement("i");
     $(icBtnSave).addClass("fas fa-undo");
     btnSave.appendChild(icBtnSave);
@@ -134,6 +135,118 @@ BlocklPyModal.prototype.pythonToBlocks = function(code, workspace) {
 };
 
 BlocklPyModal.toolboxXml = `
+<xml style="display: none">
+<category name="Karel" colour="275">
+    <block type="procedures_callnoreturn" inline="true">
+        <mutation name="move"/>
+    </block>
+    <block type="procedures_callnoreturn" inline="true">
+        <mutation name="turnLeft"/>
+    </block>
+    <block type="procedures_callnoreturn" inline="true">
+        <mutation name="turnRight"/>
+    </block>
+    <block type="procedures_callnoreturn" inline="true">
+        <mutation name="pickBall"/>
+    </block>
+    <block type="procedures_callnoreturn" inline="true">
+        <mutation name="putBall"/>
+    </block>
+    <block type="procedures_callreturn" inline="true">
+        <mutation name="frontIsClear"/>
+    </block>
+    <block type="procedures_callreturn" inline="true">
+        <mutation name="countBalls"/>
+    </block>
+    <block type="procedures_callreturn" inline="true">
+        <mutation name="ballsPresent"/>
+    </block>
+    <block type="procedures_callreturn" inline="true">
+        <mutation name="getBalls"/>
+    </block>
+    <block type="procedures_callreturn" inline="true">
+    <mutation name="hasBalls"/>
+</block>
+</category>
+<category name="Variables" custom="VARIABLE" colour="240"></category>
+<category name="Branches" colour="330">
+  <block type="controls_if_better"></block>
+  <block type="controls_if_better">
+    <mutation else="1"></mutation>
+  </block>
+  <block type="logic_compare"></block>
+  <block type="logic_operation"></block>
+  <block type="logic_negate"></block>
+</category>
+<category name="Loops" colour="300">
+  <block type="controls_forEach"></block>
+</category>
+<sep></sep>
+<category name="Computing" colour="270">
+  <block type="math_arithmetic"></block>
+  <block type="math_round"></block>
+</category>
+<category name="Output" colour="160">
+  <block type="text_print"></block>
+</category>
+<category name="Input" colour="165">
+  <block type="text_input_noprompt"></block>
+  <block type="text_input"></block>
+</category>
+<sep></sep>
+<category name="Values" colour="100">
+  <block type="text"></block>
+  <block type="math_number"></block>
+  <block type="logic_boolean"></block>
+</category>
+<category name="Conversions" colour="275">
+  <block type="procedures_callreturn" inline="true">
+    <mutation name="int">
+      <arg name=""></arg>
+    </mutation>
+  </block>
+  <block type="procedures_callreturn" inline="true">
+    <mutation name="float">
+      <arg name=""></arg>
+    </mutation>
+  </block>
+  <block type="procedures_callreturn" inline="true">
+    <mutation name="str">
+      <arg name=""></arg>
+    </mutation>
+  </block>
+  <block type="procedures_callreturn" inline="true">
+    <mutation name="bool">
+      <arg name=""></arg>
+    </mutation>
+  </block>
+</category>
+<category name="Lists" colour="30">
+  <block type="lists_create_with">
+    <value name="ADD0">
+      <block type="math_number">
+        <field name="NUM">0</field>
+      </block>
+    </value>
+    <value name="ADD1">
+      <block type="math_number">
+        <field name="NUM">0</field>
+      </block>
+    </value>
+    <value name="ADD2">
+      <block type="math_number">
+        <field name="NUM">0</field>
+      </block>
+    </value>
+  </block>
+  <block type="lists_create_with"></block>
+  <block type="lists_create_empty"></block>
+  <block type="lists_append"></block>
+  <block type="range_list1"></block>
+</category>    
+</xml>`;
+
+BlocklPyModal.toolboxXml_srp = `
 <xml style="display: none">
 <category name="Karel" colour="275">
     <block type="procedures_callnoreturn" inline="true">

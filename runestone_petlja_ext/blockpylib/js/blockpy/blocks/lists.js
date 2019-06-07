@@ -309,15 +309,18 @@ Blockly.Blocks['range_list1'] = {
     
     this.appendValueInput('LIMIT')
         .setCheck('Number')
-        .appendField("lista od ")
+        // .appendField("lista od ")
+        .appendField("a list of ")
     this.appendDummyInput()
-        .appendField(" brojeva");
+        // .appendField(" brojeva");
+        .appendField(" numbers");
     this.setInputsInline(true);
     this.setOutput(true, 'Array');
     this.setColour(Blockly.Blocks.lists.HUE);
     var thisBlock = this;
     this.setTooltip(function() {
-      return "lista od %1 uzastopnih brojeva počevši od broja 0.".replace('%1',
+      // return "lista od %1 uzastopnih brojeva počevši od broja 0.".replace('%1',
+      return "a list of %1 consecutive numbers strating from 0.".replace('%1',
           Blockly.Python.valueToCode(thisBlock, 'LIMIT', Blockly.Python.ORDER_RELATIONAL) || '___');
     });
     this.setHelpUrl('');
