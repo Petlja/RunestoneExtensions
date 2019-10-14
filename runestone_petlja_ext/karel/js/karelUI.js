@@ -48,7 +48,8 @@ $(document).ready(function() {
         var canvas = $(this).find(".world")[0];
         var textarea = $(this).find(".codeArea")[0];
         var configarea = $(this).find(".configArea")[0];
-
+        var problemId = $(this)[0].id;
+        
         var editor = CodeMirror.fromTextArea(textarea,{lineNumbers: true,
             mode: "python", indentUnit: 4,
             matchBrackets: true, autoMatchParens: true,
@@ -155,6 +156,7 @@ $(document).ready(function() {
 		function showEndMessageSuccess(){
             var eContainer = outerDiv.appendChild(document.createElement('div'));
             eContainer.className = 'col-md-12 alert alert-success';
+            eContainer.id = problemId+"-success"; 
             var msgHead = $('<p>').html('Тачно!');
             eContainer.appendChild(msgHead[0]);
             $('.run-button').removeAttr('disabled')
@@ -164,6 +166,7 @@ $(document).ready(function() {
 		function showEndMessageError(message){
             var eContainer = outerDiv.appendChild(document.createElement('div'));
             eContainer.className = 'col-md-12 alert alert-danger';
+            eContainer.id = problemId+"-error";
             var msgHead = $('<p>').html(message);
             eContainer.appendChild(msgHead[0]);
             $('.run-button').removeAttr('disabled');
