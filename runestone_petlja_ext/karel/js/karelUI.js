@@ -48,7 +48,7 @@ $(document).ready(function() {
         var canvas = $(this).find(".world")[0];
         var textarea = $(this).find(".codeArea")[0];
         var configarea = $(this).find(".configArea")[0];
-        var problemId = $(this)[0].id;
+        var problemId = this.id;
         
         var editor = CodeMirror.fromTextArea(textarea,{lineNumbers: true,
             mode: "python", indentUnit: 4,
