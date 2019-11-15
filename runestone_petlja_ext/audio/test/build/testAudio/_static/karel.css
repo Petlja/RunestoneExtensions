@@ -1,0 +1,54 @@
+.karel_section{
+	position: relative;
+	clear:both;
+}
+.karel_section>* {
+	margin-left: auto;
+	margin-right: auto;
+	position:relative;
+}
+.karel_section .clearfix{
+	position: initial;
+}
+
+.container .section .karel_section{
+    max-width: none !important;
+}
+
+.karel_section>.col-md-12 {
+	max-width: 100% !important;
+}
+
+.karel_caption {
+    text-align: right;
+    font-weight: normal;
+	font-size: 0.5em;
+}
+
+.karel_caption_text {
+    font-weight: normal;
+}
+.karel_caption:before {
+    content: "Karel: " counter(activecode) " ";
+    counter-increment: karel;
+}
+
+.karel_actions{
+	text-align: center;
+}
+
+.karel_section .CodeMirror pre {
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+  border-width: 0; margin: 0; padding: 0; background: transparent;
+  font-family:  monospace;
+  font-size: inherit;
+  padding: 0; margin: 0;
+  white-space: pre;
+  word-wrap: normal;
+  text-align: left;
+}
+
+
