@@ -55,7 +55,7 @@ class AudioDirective(Directive):
                 raise IOError("Extension length exceeded")
             self.options["ext"] = ext
         else:
-            self.options["ext"] = "wav"
+            self.options["ext"] = "mp3"
         
         self.options['path'] += "."+self.options["ext"]
         
